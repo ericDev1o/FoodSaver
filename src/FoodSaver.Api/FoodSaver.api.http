@@ -1,0 +1,6 @@
+@FoodSaver.Api_HostAddress = https://localhost:7222
+
+GET {{FoodSaver.Api_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
