@@ -12,6 +12,13 @@ public static class CreateFoodEndpoint
             AppDbContext db,
             CancellationToken ct) =>
         {
+            if (string.IsNullOrWhiteSpace(request.Name))
+                return Results.BadRequest("Name is required.");
+
+            if (request.ExpiryDate < DateOnly.FromDateTime(DateTime.UtcNow))
+                return Results.UnprocessableEntity(
+                    "Expiry date cannot be in the past.");
+
             FoodItem food = new()
             {
                 Id = Guid.NewGuid(),
@@ -26,7 +33,9 @@ public static class CreateFoodEndpoint
 
             return Results.Created($"/foods/{food.Id}", food);
         })
-        .Produces<FoodItem>(StatusCodes.Status201Created);
+        .Produces<FoodItem>(StatusCodes.Status201Created)
+        .Produces(StatusCodes.Status400BadRequest)
+        .Produces(StatusCodes.Status422UnprocessableEntity);
 
         return app;
     }

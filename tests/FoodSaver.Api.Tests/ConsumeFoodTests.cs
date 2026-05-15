@@ -50,4 +50,26 @@ public sealed class ConsumeFoodTests(ApiFactory factory)
             food.Name == "Milk"
             && food.IsConsumed);
     }
+
+    [Fact]
+    public async Task Given_a_missing_food_must_return_not_found()
+    {
+        // Arrange
+
+        CancellationToken ct = TestContext.Current.CancellationToken;
+
+        Guid missingId = Guid.NewGuid();
+
+        // Act
+
+        HttpResponseMessage response =
+            await _client.PatchAsync(
+                $"/foods/{missingId}/consume",
+                null,
+                ct);
+
+        // Assert
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }
