@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 using FoodSaver.Api.Data;
 using FoodSaver.Api.Features.Create;
+using FoodSaver.Api.Features.GetAll;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapCreateFoodEndpoint();
+app.MapGetFoodsEndpoint();
 
 app.UseHttpsRedirection();
 
