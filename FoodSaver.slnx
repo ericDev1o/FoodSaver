@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FoodSaver.Api/FoodSaver.Api.csproj" />
+  </Folder>
+</Solution>
