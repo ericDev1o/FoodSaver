@@ -28,7 +28,9 @@ public static class ConsumeFoodEndpoint
             await db.SaveChangesAsync(ct);
 
             return Results.NoContent();
-        });
+        })
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
 
         return app;
     }

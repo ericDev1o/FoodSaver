@@ -9,14 +9,17 @@ public static class GetFoodsEndpoint
 {
     public static IEndpointRouteBuilder MapGetFoodsEndpoint(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/foods", async (AppDbContext db, CancellationToken ct) =>
+        app.MapGet("/foods", async (
+            AppDbContext db, 
+            CancellationToken ct) =>
         {
             List<FoodItem> foods = await db.FoodItems
                 .AsNoTracking()
                 .ToListAsync(ct);
 
             return Results.Ok(foods);
-        });
+        })
+        .Produces<List<FoodItem>>(StatusCodes.Status200OK);
 
         return app;
     }

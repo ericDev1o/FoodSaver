@@ -9,7 +9,8 @@ public static class CreateFoodEndpoint
     {
         app.MapPost("/foods", static async (
             CreateFoodRequest request,
-            AppDbContext db) =>
+            AppDbContext db,
+            CancellationToken ct) =>
         {
             FoodItem food = new()
             {
@@ -21,10 +22,11 @@ public static class CreateFoodEndpoint
 
             db.FoodItems.Add(food);
 
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(ct);
 
             return Results.Created($"/foods/{food.Id}", food);
-        });
+        })
+        .Produces<FoodItem>(StatusCodes.Status201Created);
 
         return app;
     }
