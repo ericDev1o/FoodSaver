@@ -13,6 +13,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite("Data Source=foodsaver.db");
 });
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy
+                .WithOrigins(
+                    "http://localhost:5173",
+                    "http://localhost:4173")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+}
 
 WebApplication app = builder.Build();
 
@@ -25,6 +40,11 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors();
 }
 
 app.MapCreateFoodEndpoint();
