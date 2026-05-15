@@ -6,7 +6,7 @@ using FoodSaver.Api.Features.Create;
 using FoodSaver.Api.Features.GetAll;
 using FoodSaver.Api.Features.Consume;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -14,15 +14,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=foodsaver.db");
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 using IServiceScope scope = app.Services.CreateAsyncScope();
-
 AppDbContext db = scope.ServiceProvider
     .GetRequiredService<AppDbContext>();
-
 await db.Database.EnsureCreatedAsync();
-
 
 if (app.Environment.IsDevelopment())
 {
