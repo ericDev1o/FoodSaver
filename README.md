@@ -17,8 +17,8 @@ Track your food expiry dates. Reduce household waste.
 ### Backend
 
 ```bash
-dotnet test
 dotnet build
+dotnet test
 dotnet run --no-build
 ```
 
