@@ -7,7 +7,7 @@ node_modules/
 dist/
 
 # Yarn
-.yarn/install-state.gz
+install-state.gz
 
 # Env file
 .env
@@ -80,6 +80,3 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
-
-# Frontend
-src/FoodSaver.Web/
