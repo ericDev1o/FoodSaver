@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    /* TS 6+ defaults are intentionally kept
+    (strict, target, module) */
+    "strict": true,
+    "target": "es2025",
+    "module": "esnext",
+
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

@@ -1,0 +1,47 @@
+import type { 
+    CreateFoodRequest, 
+    Food 
+} from '../feature/types';
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+async function ensureSuccess(response: Response) : Promise<void> {
+  if (!response.ok) {
+    const errorText = response.text();
+
+    throw new Error(`API request failed. 
+        Status: ${response.status},
+        Message: ${errorText}
+        `);
+  }
+}
+
+export async function getFoods(): Promise<Food[]> {
+  const response = await fetch(`${API_URL}/foods`);
+
+  await ensureSuccess(response);
+
+  return response.json();
+}
+
+export async function createFood(request: CreateFoodRequest): Promise<Food> {
+  const response = await fetch(`${API_URL}/foods`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+
+  await ensureSuccess(response);
+
+  return response.json();
+}
+
+export async function consumeFood(id: string): Promise<void> {
+  const response = await fetch(`${API_URL}/foods/${id}/consume`, {
+    method: 'PATCH',
+  });
+
+  await ensureSuccess(response);
+}
