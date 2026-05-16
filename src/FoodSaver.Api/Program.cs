@@ -6,28 +6,35 @@ using FoodSaver.Api.Features.Create;
 using FoodSaver.Api.Features.GetAll;
 using FoodSaver.Api.Features.Consume;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+const string CorsPolicy = "frontend";
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args) 
+?? throw new NullReferenceException("Builder must'nt be null");
+
+string[] origins = builder.Configuration
+    .GetSection("Cors:Origins")
+    .Get<string[]>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite("Data Source=foodsaver.db");
 });
-if (builder.Environment.IsDevelopment())
+
+builder.Services.AddCors(options =>
 {
-    builder.Services.AddCors(options =>
+    options.AddPolicy(CorsPolicy, policy =>
     {
-        options.AddDefaultPolicy(policy =>
-        {
-            policy
-                .WithOrigins(
-                    "http://localhost:5173",
-                    "http://localhost:4173")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+        policy
+            .WithOrigins(origins)
+            .AllowAnyHeader()
+            .WithMethods(
+                "GET",
+                "POST",
+                "PATCH"
+            );
     });
-}
+});
 
 WebApplication app = builder.Build();
 
@@ -42,10 +49,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors();
-}
+app.UseCors(CorsPolicy);
 
 app.MapCreateFoodEndpoint();
 app.MapGetFoodsEndpoint();
