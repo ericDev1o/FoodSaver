@@ -23,6 +23,7 @@ export default function App() {
   const [foods, setFoods] = useState<Food[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [scrolled, setScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const isDark = theme === 'dark';
 
@@ -54,8 +55,13 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const foods = await getFoods();
-      setFoods(foods);
+      try{
+        const foods = await getFoods();
+        setFoods(foods);
+      }
+      finally {
+        setIsLoading(false);
+      }
     })();
   }, []);
 
@@ -89,6 +95,7 @@ export default function App() {
 
         <FoodForm onCreate={handleCreateFood} />
 
+        { isLoading && <p>Loading foods...</p>}
         <FoodList
           foods={foods}
           onConsume={handleConsumeFood}
