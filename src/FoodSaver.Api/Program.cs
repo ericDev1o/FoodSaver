@@ -8,12 +8,15 @@ using FoodSaver.Api.Features.Consume;
 
 const string CorsPolicy = "frontend";
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args) 
-?? throw new NullReferenceException("Builder must'nt be null");
+string port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 string[] origins = builder.Configuration
     .GetSection("Cors:Origins")
-    .Get<string[]>();
+    .Get<string[]>()
+    ?? throw new InvalidOperationException
+    ("CORS origins configuration is missing.");
 
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -38,12 +41,14 @@ builder.Services.AddCors(options =>
 
 WebApplication app = builder.Build();
 
+app.Urls.Add($"http://0.0.0.0:{port}");
+
 using IServiceScope scope = app.Services.CreateAsyncScope();
 AppDbContext db = scope.ServiceProvider
     .GetRequiredService<AppDbContext>();
 await db.Database.EnsureCreatedAsync();
 
-if (app.Environment.IsDevelopment())
+if (builder.Configuration.GetValue<bool>("EnableDocs"))
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
@@ -55,7 +60,10 @@ app.MapCreateFoodEndpoint();
 app.MapGetFoodsEndpoint();
 app.MapConsumeFoodEndpoint();
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.Run();
 
