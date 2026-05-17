@@ -6,52 +6,64 @@ using FoodSaver.Api.Features.Create;
 using FoodSaver.Api.Features.GetAll;
 using FoodSaver.Api.Features.Consume;
 
+const string CorsPolicy = "frontend";
+
+string port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+string[] origins = builder.Configuration
+    .GetSection("Cors:Origins")
+    .Get<string[]>()
+    ?? throw new InvalidOperationException
+    ("CORS origins configuration is missing.");
 
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite("Data Source=foodsaver.db");
 });
-if (builder.Environment.IsDevelopment())
+
+builder.Services.AddCors(options =>
 {
-    builder.Services.AddCors(options =>
+    options.AddPolicy(CorsPolicy, policy =>
     {
-        options.AddDefaultPolicy(policy =>
-        {
-            policy
-                .WithOrigins(
-                    "http://localhost:5173",
-                    "http://localhost:4173")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+        policy
+            .WithOrigins(origins)
+            .AllowAnyHeader()
+            .WithMethods(
+                "GET",
+                "POST",
+                "PATCH"
+            );
     });
-}
+});
 
 WebApplication app = builder.Build();
+
+app.Urls.Add($"http://0.0.0.0:{port}");
 
 using IServiceScope scope = app.Services.CreateAsyncScope();
 AppDbContext db = scope.ServiceProvider
     .GetRequiredService<AppDbContext>();
 await db.Database.EnsureCreatedAsync();
 
-if (app.Environment.IsDevelopment())
+if (builder.Configuration.GetValue<bool>("EnableDocs"))
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors();
-}
+app.UseCors(CorsPolicy);
 
 app.MapCreateFoodEndpoint();
 app.MapGetFoodsEndpoint();
 app.MapConsumeFoodEndpoint();
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.Run();
 
