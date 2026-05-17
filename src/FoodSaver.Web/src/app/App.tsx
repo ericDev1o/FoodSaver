@@ -103,10 +103,15 @@ export default function App() {
         <FoodForm onCreate={handleCreateFood} />
 
         { isLoading && <p>Loading foods...</p>}
-        <FoodList
-          foods={foods}
-          onConsume={handleConsumeFood}
-        />
+
+        { foods.length === 0 ? (
+            <p>Add your first food to get started.</p>
+          ) : (
+            <FoodList
+              foods={ foods }
+              onConsume={ handleConsumeFood }
+            />
+          )}
       </main>
     </div>
   );
