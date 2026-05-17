@@ -6,14 +6,16 @@ import type {
 const API_URL = import.meta.env.VITE_API_URL;
 
 async function ensureSuccess(response: Response) : Promise<void> {
-  if (!response.ok) {
-    const errorText = response.text();
+  if (response.ok)
+    return;
+  
+  const errorText = await response.text();
 
-    throw new Error(`API request failed. 
-        Status: ${response.status},
-        Message: ${errorText}
-        `);
-  }
+  throw new Error(
+    `API request failed. 
+    Status: ${response.status},
+    Message: ${errorText}
+  `);
 }
 
 export async function getFoods(): Promise<Food[]> {
