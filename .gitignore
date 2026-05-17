@@ -10,7 +10,7 @@ dist/
 install-state.gz
 
 # Env file
-.env
+.env*
 
 # Backend
 
