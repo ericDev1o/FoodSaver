@@ -86,20 +86,19 @@ export default function App() {
 
   return (
     <div className='app-container'>
+      <header className={`app-header ${scrolled ? 'scrolled' : ''}`}>
+        <h1>FoodSaver</h1>
+        <button
+          className='theme-toggle'
+          onClick={toggleTheme}
+          aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+          aria-pressed={theme === 'dark'}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {isDark ? '☀️' : '🌙'}
+        </button>
+      </header>
       <main>
-        <header className={`app-header ${scrolled ? 'scrolled' : ''}`}>
-          <h1>FoodSaver</h1>
-          <button
-            className='theme-toggle'
-            onClick={toggleTheme}
-            aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-            aria-pressed={theme === 'dark'}
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {isDark ? '☀️' : '🌙'}
-          </button>
-        </header>
-
         <FoodForm onCreate={handleCreateFood} />
 
         { isLoading && <p>Loading foods...</p>}
