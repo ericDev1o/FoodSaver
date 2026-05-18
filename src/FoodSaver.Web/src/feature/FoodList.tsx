@@ -8,6 +8,10 @@ type Props = {
 export function FoodList({ foods, onConsume }: Props) {
   const today = new Date().toISOString().split('T')[0];
 
+  const todayDate = new Date();
+  const threeDaysLater = new Date();
+  threeDaysLater.setDate(todayDate.getDate() + 3);
+
   const sortedFoods = [...foods].sort(
     (a, b) => a.expiryDate.localeCompare(b.expiryDate)
   );
@@ -16,6 +20,11 @@ export function FoodList({ foods, onConsume }: Props) {
     <ul>
       {sortedFoods.map((food) => {
         const isExpired = food.expiryDate < today; 
+        const expiry = new Date(food.expiryDate);
+        const isSoonToExpire = 
+          ! food.isConsumed &&
+          expiry >= todayDate && 
+          expiry <= threeDaysLater;
 
         return (
           <li 
@@ -55,6 +64,12 @@ export function FoodList({ foods, onConsume }: Props) {
 
             {food.isConsumed && (
               <small aria-label="Food already consumed">consumed</small>
+            )}
+
+            {isSoonToExpire && (
+              <small className="soon-badge">
+                expiring soon
+              </small>
             )}
           </li>
         );
