@@ -50,7 +50,7 @@ export function FoodList({ foods, onConsume }: Props) {
             )}
 
             {food.isConsumed && (
-              <small>Consumed</small>
+              <small aria-label="Food already consumed">consumed</small>
             )}
           </li>
         );
