@@ -6,37 +6,55 @@ type Props = {
 };
 
 export function FoodList({ foods, onConsume }: Props) {
+  const today = new Date().toISOString().split('T')[0];
+  
   return (
     <ul>
-      {foods.map((food) => (
-        <li 
-          key={food.id} 
-          className={food.isConsumed ? 'consumed' : ''}
-          aria-label={`
-            ${food.name},
-            ${food.isConsumed 
-            ? 'consumed'
-            : 'active' }
-          `}
-        >
-          <span>
-            {food.name} - {food.expiryDate}
-          </span>
+      {foods.map((food) => {
+        const isExpired = food.expiryDate < today; 
 
-          {!food.isConsumed && (
-            <button 
-              onClick={() => onConsume(food.id)}
-              aria-label='Mark food as consumed'
-            >
-              Consume
-            </button>
-          )}
+        return (
+          <li 
+            key={food.id} 
+            className={food.isConsumed ? 'consumed' : ''}
+            aria-label={`
+              ${food.name},
+              ${food.isConsumed 
+              ? 'consumed'
+              : 'active' }
+            `}
+          >
+            <span>
+              {food.name} 
+              {isExpired ? ' expired ' : ' expires '} 
+              on {' '} 
+              {new Date(food.expiryDate).toLocaleDateString
+                (
+                  'en-GB', 
+                  {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                  }
+                )
+              }
+            </span>
 
-          {food.isConsumed && (
-            <small>Consumed</small>
-          )}
-        </li>
-      ))}
+            {!food.isConsumed && (
+              <button 
+                onClick={() => onConsume(food.id)}
+                aria-label='Mark food as consumed'
+              >
+                Consume
+              </button>
+            )}
+
+            {food.isConsumed && (
+              <small>Consumed</small>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
