@@ -54,6 +54,10 @@ export default function App() {
     setScrolled(prev => (prev === isScrolled ? prev : isScrolled));
   }
 
+  const activeFoodsCount = foods.filter(
+    food => !food.isConsumed
+  ).length;
+
   useEffect(() => {
     (async () => {
       try{
@@ -81,6 +85,9 @@ export default function App() {
     };
   }, []);
 
+  if(isLoading)
+    return <p>Loading foods...</p>
+
   if(error)
     return <p>{error}</p>
 
@@ -101,7 +108,11 @@ export default function App() {
       <main>
         <FoodForm onCreate={handleCreateFood} />
 
-        { isLoading && <p>Loading foods...</p>}
+        <p>
+          {activeFoodsCount} food
+          {activeFoodsCount > 1 ? 's' : ''}
+          {' '}to consume
+        </p>
 
         { foods.length === 0 ? (
             <p>Add your first food to get started.</p>
