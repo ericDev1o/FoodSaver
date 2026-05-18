@@ -60,11 +60,6 @@ app.MapCreateFoodEndpoint();
 app.MapGetFoodsEndpoint();
 app.MapConsumeFoodEndpoint();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
-
 app.Run();
 
 public partial class Program;
