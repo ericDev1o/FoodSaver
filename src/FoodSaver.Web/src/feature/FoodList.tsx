@@ -7,10 +7,14 @@ type Props = {
 
 export function FoodList({ foods, onConsume }: Props) {
   const today = new Date().toISOString().split('T')[0];
+
+  const sortedFoods = [...foods].sort(
+    (a, b) => a.expiryDate.localeCompare(b.expiryDate)
+  );
   
   return (
     <ul>
-      {foods.map((food) => {
+      {sortedFoods.map((food) => {
         const isExpired = food.expiryDate < today; 
 
         return (
