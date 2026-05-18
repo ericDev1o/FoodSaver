@@ -23,6 +23,8 @@ export default function App() {
   const [foods, setFoods] = useState<Food[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [scrolled, setScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const isDark = theme === 'dark';
 
@@ -54,8 +56,16 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const foods = await getFoods();
-      setFoods(foods);
+      try{
+        const foods = await getFoods();
+        setFoods(foods);
+      }
+      catch {
+        setError("Unable to load foods.");
+      }
+      finally {
+        setIsLoading(false);
+      }
     })();
   }, []);
 
@@ -70,6 +80,9 @@ export default function App() {
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
+
+  if(error)
+    return <p>{error}</p>
 
   return (
     <div className='app-container'>
@@ -89,10 +102,16 @@ export default function App() {
 
         <FoodForm onCreate={handleCreateFood} />
 
-        <FoodList
-          foods={foods}
-          onConsume={handleConsumeFood}
-        />
+        { isLoading && <p>Loading foods...</p>}
+
+        { foods.length === 0 ? (
+            <p>Add your first food to get started.</p>
+          ) : (
+            <FoodList
+              foods={ foods }
+              onConsume={ handleConsumeFood }
+            />
+          )}
       </main>
     </div>
   );
