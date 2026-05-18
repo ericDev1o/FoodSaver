@@ -81,6 +81,9 @@ export default function App() {
     };
   }, []);
 
+  if(isLoading)
+    return <p>Loading foods...</p>
+
   if(error)
     return <p>{error}</p>
 
@@ -100,8 +103,6 @@ export default function App() {
       </header>
       <main>
         <FoodForm onCreate={handleCreateFood} />
-
-        { isLoading && <p>Loading foods...</p>}
 
         { foods.length === 0 ? (
             <p>Add your first food to get started.</p>
