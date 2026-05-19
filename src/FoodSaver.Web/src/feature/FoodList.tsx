@@ -38,7 +38,7 @@ export function FoodList({ foods, onConsume }: Props) {
             `}
           >
             <span>
-              {food.name} 
+              {food.name} x{food.quantity}
               {isExpired ? ' expired ' : ' expires '} 
               on {' '} 
               {new Date(food.expiryDate).toLocaleDateString
