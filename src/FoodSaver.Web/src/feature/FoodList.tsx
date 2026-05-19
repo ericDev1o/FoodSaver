@@ -2,7 +2,7 @@ import type { Food } from './types';
 
 type Props = {
   foods: Food[];
-  onConsume: (id: string) => void;
+  onConsume: (id: string) => void | Promise<void>;
 };
 
 export function FoodList({ foods, onConsume }: Props) {
@@ -41,8 +41,8 @@ export function FoodList({ foods, onConsume }: Props) {
               {food.name} x{food.quantity}
               {isExpired ? ' expired ' : ' expires '} 
               on {' '} 
-              {new Date(food.expiryDate).toLocaleDateString
-                (
+              {new Date(food.expiryDate)
+                .toLocaleDateString(
                   'en-GB', 
                   {
                     day: 'numeric',
@@ -55,7 +55,7 @@ export function FoodList({ foods, onConsume }: Props) {
 
             {!food.isConsumed && (
               <button 
-                onClick={() => onConsume(food.id)}
+                onClick={() => {onConsume(food.id)}}
                 aria-label='Mark food as consumed'
               >
                 Consume

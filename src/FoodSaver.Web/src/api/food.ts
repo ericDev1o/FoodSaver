@@ -3,7 +3,7 @@ import type {
     Food 
 } from '../feature/types';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL: string = import.meta.env.VITE_API_URL as string;
 
 async function ensureSuccess(response: Response) : Promise<void> {
   if (response.ok)
@@ -12,8 +12,8 @@ async function ensureSuccess(response: Response) : Promise<void> {
   const errorText = await response.text();
 
   throw new Error(
-    `API request failed. 
-    Status: ${response.status},
+    `Name: API request failed. 
+    Status: ${String(response.status)},
     Message: ${errorText}
   `);
 }
@@ -23,7 +23,7 @@ export async function getFoods(): Promise<Food[]> {
 
   await ensureSuccess(response);
 
-  return response.json();
+  return await response.json() as Food[];
 }
 
 export async function createFood(request: CreateFoodRequest): Promise<Food> {
@@ -37,7 +37,7 @@ export async function createFood(request: CreateFoodRequest): Promise<Food> {
 
   await ensureSuccess(response);
 
-  return response.json();
+  return await response.json() as Food;
 }
 
 export async function consumeFood(id: string): Promise<void> {
