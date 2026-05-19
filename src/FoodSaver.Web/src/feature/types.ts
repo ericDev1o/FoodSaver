@@ -3,9 +3,11 @@ export type Food = {
   name: string;
   expiryDate: string;
   isConsumed: boolean;
+  quantity: number;
 };
 
 export type CreateFoodRequest = {
   name: string;
   expiryDate: string;
+  quantity: number;
 };

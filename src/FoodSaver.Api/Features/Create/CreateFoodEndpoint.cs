@@ -24,7 +24,8 @@ public static class CreateFoodEndpoint
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 ExpiryDate = request.ExpiryDate,
-                IsConsumed = false
+                IsConsumed = false,
+                Quantity = request.Quantity
             };
 
             db.FoodItems.Add(food);

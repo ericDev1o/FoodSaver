@@ -10,8 +10,9 @@ export function FoodForm({ onCreate }: Props) {
   const [name, setName] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
 
-  async function handleSubmit() {
+  function handleSubmit() {
     setError(null);
 
     const trimmedName = name.trim();
@@ -33,9 +34,15 @@ export function FoodForm({ onCreate }: Props) {
       return;
     }
 
+    if (quantity < 1) {
+      setError('Quantity must be at least 1. Please try again.')
+      return;
+    }
+
     onCreate({
       name: trimmedName,
       expiryDate,
+      quantity
     });
   }
   
@@ -55,14 +62,21 @@ export function FoodForm({ onCreate }: Props) {
       >
         <input
           value={ name }
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {setName(e.target.value)}}
           placeholder='Food name'
         />
 
         <input
           type='date'
           value={ expiryDate }
-          onChange={(e) => setExpiryDate(e.target.value)}
+          onChange={(e) => {setExpiryDate(e.target.value)}}
+        />
+
+        <input
+          type='number'
+          min='1'
+          value={ quantity }
+          onChange={(e) => {setQuantity(Number(e.target.value))}}
         />
 
         <button type='submit'>Add</button>
