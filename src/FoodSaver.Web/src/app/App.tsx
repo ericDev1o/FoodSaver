@@ -119,7 +119,7 @@ export default function App() {
           ) : (
             <FoodList
               foods={ foods }
-              onConsume={ handleConsumeFood }
+              onConsume={handleConsumeFood}
             />
           )}
       </main>
