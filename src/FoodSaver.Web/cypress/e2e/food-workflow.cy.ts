@@ -4,9 +4,7 @@ describe('food workflow', () => {
     const foodName = `Milk (test e2e ${new Date().toLocaleString('fr-FR').replace(',', '')}`;
 
     cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods',
-      retryOnStatusCodeFailure: true,
-      timeout: 30000,
+      url: 'https://foodsaver-api-00tb.onrender.com/foods'
     });
     cy.visit('/');
 
@@ -27,16 +25,13 @@ describe('food workflow', () => {
 
     // Assert
     cy.contains('li', foodName)
-      .should('exist')
-      .first()
-      .as('foodItem');
+      .should('exist');
 
-    cy.get('@foodItem')
-      .find('button', { timeout: 10000 })
-      .contains(/consume/i)
-      .click();
+    cy.contains('li', foodName).within(() => {
+      cy.findByRole('button', { name: /consume/i }).click();
+    });
 
-    cy.get('@foodItem')
-      .should('contain.text', /consumed/i);
-  });
+    cy.contains('li', foodName)
+      .should('contain.text', 'consumed'); 
+    });
 });
