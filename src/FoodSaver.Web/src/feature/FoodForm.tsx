@@ -75,7 +75,7 @@ export function FoodForm({ onCreate }: Props) {
         <label
           className='sr-only'
           htmlFor='date'
-          >
+        >
           Use-by
         </label>
         <input
