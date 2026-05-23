@@ -89,7 +89,14 @@ export default function App() {
     return <p>Loading foods...</p>
 
   if(error)
-    return <p>{error}</p>
+    return (
+    <p
+      className='error-text'
+      role='alert'
+    >
+        {error}
+    </p>
+    );
 
   return (
     <div className='app-container'>

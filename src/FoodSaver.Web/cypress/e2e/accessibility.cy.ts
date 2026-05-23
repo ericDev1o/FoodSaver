@@ -19,7 +19,7 @@ describe('Accessibility Tests', () => {
       {
         runOnly: {
           type: 'tag',
-          values: ['wcag2a']
+          values: ['wcag2a', 'wcag2aa']
         }
       },
       (violations) => {

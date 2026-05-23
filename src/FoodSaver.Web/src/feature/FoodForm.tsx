@@ -67,6 +67,7 @@ export function FoodForm({ onCreate }: Props) {
           Food name
         </label>
         <input
+          id='name'
           value={ name }
           onChange={(e) => {setName(e.target.value)}}
           placeholder='Food name'  
