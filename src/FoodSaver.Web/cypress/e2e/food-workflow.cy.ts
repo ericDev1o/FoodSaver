@@ -1,5 +1,8 @@
+/**
+ * Please see ./accessibility.cy.ts
+ */
 describe('food workflow', () => {
-  it('must create and consume a food item', () => {
+  it('must create and consume a food item.', () => {
     // Arrange
     const foodName = `Milk (test e2e ${new Date().toLocaleString('fr-FR').replace(',', '')}`;
 

@@ -52,6 +52,17 @@ h1 {
   margin: 0 0 24px;
 }
 
+.sr-only {
+  /* minimal */
+  position: absolute;
+  clip-path: inset(50%);
+  /* safer */
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 form {
   display: flex;
   gap: 0.75rem;

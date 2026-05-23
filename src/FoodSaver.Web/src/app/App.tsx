@@ -114,15 +114,18 @@ export default function App() {
           {' '}to consume
         </p>
 
-        { foods.length === 0 ? (
+        {foods.length === 0 ? (
             <p>Add your first food to get started.</p>
           ) : (
             <FoodList
-              foods={ foods }
+              foods={foods}
               onConsume={handleConsumeFood}
             />
           )}
       </main>
+      <footer>
+        <p>&copy; 2026 FoodSaver. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
