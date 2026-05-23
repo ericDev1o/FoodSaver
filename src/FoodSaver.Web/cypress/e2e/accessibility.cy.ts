@@ -2,9 +2,8 @@
  * For now, 
  *  * Cold start? please rerun manually.
  *  * Dev? Please 
- *    * configure your render Dashboard(1) to deploy from the feature branch
- *    * commit and push your feature
- *    (1) https://dashboard.render.com/...
+ *    1. configure your render https://dashboard.render.com/... to deploy from the feature branch; then
+ *    2. commit and push your feature
  */
 describe('Accessibility Tests', () => {
   it('must have no accessibility violations.', () => {

@@ -69,11 +69,17 @@ export function FoodForm({ onCreate }: Props) {
         <input
           value={ name }
           onChange={(e) => {setName(e.target.value)}}
-          placeholder='Food name'
-          
+          placeholder='Food name'  
         />
 
+        <label
+          className='sr-only'
+          htmlFor='date'
+          >
+          Use-by
+        </label>
         <input
+          id='date'
           type='date'
           value={ expiryDate }
           onChange={(e) => {setExpiryDate(e.target.value)}}
