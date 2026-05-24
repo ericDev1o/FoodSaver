@@ -22,7 +22,8 @@ public sealed class ConsumeFoodTests(ApiFactory factory)
 
         CreateFoodRequest request = new(
             "Milk",
-            new DateOnly(2026, 05, 20)
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)),
+            1
         );
 
         HttpResponseMessage createResponse =

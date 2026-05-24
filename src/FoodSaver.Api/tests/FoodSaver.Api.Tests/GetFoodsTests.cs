@@ -19,7 +19,8 @@ public sealed class GetFoodsTests(ApiFactory factory) : IClassFixture<ApiFactory
 
         CreateFoodRequest create = new(
             "Milk", 
-            new DateOnly(2026, 05, 20)
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)),
+            1
         );
 
         await _client.PostAsJsonAsync("/foods", create, ct);

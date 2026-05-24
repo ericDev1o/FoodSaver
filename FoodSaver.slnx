@@ -2,4 +2,8 @@
   <Folder Name="/src/">
     <Project Path="src/FoodSaver.Api/FoodSaver.Api.csproj" />
   </Folder>
+  <Folder Name="/src/FoodSaver.Api/" />
+  <Folder Name="/src/FoodSaver.Api/tests/">
+    <Project Path="src/FoodSaver.Api/tests/FoodSaver.Api.Tests/FoodSaver.Api.Tests.csproj" />
+  </Folder>
 </Solution>

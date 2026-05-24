@@ -12,17 +12,15 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private SqliteConnection _connection = default!;
 
-    public ValueTask InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
-        _connection = new SqliteConnection("Data Source=:memory:");
-        _connection.Open();
+        _connection = new SqliteConnection("DataSource=:memory:");
+        await _connection.OpenAsync();
 
         using IServiceScope scope = Services.CreateScope();
         using AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        db.Database.EnsureCreated();
-
-        return ValueTask.CompletedTask;
+        await db.Database.EnsureCreatedAsync();
     }
 
     public new ValueTask DisposeAsync()
@@ -33,11 +31,17 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureServices((IServiceCollection services) =>
-        { 
-            services.AddDbContext<AppDbContext>( DbContextOptions =>
+        builder.ConfigureServices(services =>
+        {
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+
+            if (descriptor != null)
+                services.Remove(descriptor);
+
+            services.AddDbContext<AppDbContext>(options =>
             {
-                DbContextOptions.UseSqlite(_connection);
+                options.UseSqlite(_connection);
             });
         });
     }
