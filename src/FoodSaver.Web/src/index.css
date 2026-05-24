@@ -1,9 +1,11 @@
 :root {
-  --text: #6b6375;
+  --text: black;
   --text-h: #08060d;
+  --text-li: black;
+  --text-muted: #5f6368;
 
   --bg: #fff;
-  --border: #e5e4e7;
+  --border: black;
 
   --accent: orange;
   --accent-bg: rgba(170, 59, 255, 0.1);
@@ -27,10 +29,11 @@
 }
 
 :root[data-theme="dark"] {
-  --text: #9ca3af;
+  --text: white;
   --text-h: #f3f4f6;
+  --text-muted: #c1c7d0;
   --bg: #16171d;
-  --border: #2e303a;
+  --border: #d1d5db;
 }
 
 body {
@@ -57,8 +60,6 @@ body {
   align-items: center;
 
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow);
 }
