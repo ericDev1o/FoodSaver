@@ -14,6 +14,9 @@ install-state.gz
 
 # Backend
 
+## xUnit
+xunit.runner.json
+
 ## SQLite
 *.db-shm
 *.db-wal
