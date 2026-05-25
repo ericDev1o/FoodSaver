@@ -20,7 +20,8 @@ public sealed class CreateFoodTests(ApiFactory factory) : IClassFixture<ApiFacto
 
         CreateFoodRequest request = new(
             "Milk",
-            new DateOnly(2026, 05, 20)
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)),
+            1
         );
 
         // Act
@@ -42,7 +43,8 @@ public sealed class CreateFoodTests(ApiFactory factory) : IClassFixture<ApiFacto
 
         CreateFoodRequest request = new(
             "",
-            new DateOnly(2026, 05, 20)
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)),
+            1
         );
 
         // Act
@@ -64,7 +66,8 @@ public sealed class CreateFoodTests(ApiFactory factory) : IClassFixture<ApiFacto
 
         CreateFoodRequest request = new(
             "Milk",
-            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1))
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1)),
+            1
         );
 
         // Act

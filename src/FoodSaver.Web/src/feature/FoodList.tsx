@@ -56,7 +56,7 @@ export function FoodList({ foods, onConsume }: Props) {
             {!food.isConsumed && (
               <button 
                 onClick={() => {onConsume(food.id)}}
-                aria-label='Mark food as consumed'
+                aria-label={`Mark ${food.name} as consumed`}
               >
                 Consume
               </button>
@@ -67,9 +67,9 @@ export function FoodList({ foods, onConsume }: Props) {
             )}
 
             {isSoonToExpire && (
-              <small className="soon-badge">
+              <span className="soon-badge">
                 expiring soon
-              </small>
+              </span>
             )}
           </li>
         );
