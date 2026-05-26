@@ -1,4 +1,8 @@
-bin/
-obj/
-.git/
-.vscode/
+bin
+obj
+
+tests
+
+*.db
+
+Dockerfile
