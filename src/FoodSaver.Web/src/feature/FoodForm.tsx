@@ -20,19 +20,19 @@ export function FoodForm({ onCreate }: Props) {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
-      setError('Food name is required.');
+      setError('Food name is required. Please try again.');
       return;
     }
 
     if (!expiryDate) {
-      setError('Expiration date is required.');
+      setError('Expiration date is required. Please try again.');
       return;
     }
 
     const today = new Date().toISOString().split('T')[0];
 
     if (expiryDate < today) {
-      setError('Expiration date must be today or in the future.');
+      setError('Expiration date must be today or in the future. Please try again.');
       return;
     }
 
