@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import type { CreateFoodRequest } from './types';
 
+import './FoodForm.css';
+
 type Props = {
   onCreate: (request: CreateFoodRequest) => void;
 };

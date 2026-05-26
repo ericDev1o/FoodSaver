@@ -48,7 +48,6 @@
 h1 {
   text-align: center;
   color: var(--text-h);
-  margin: 0 0 24px;
 }
 
 .error-container {
@@ -68,30 +67,6 @@ h1 {
   height: 1px;
   overflow: hidden;
   white-space: nowrap;
-}
-
-form {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-input {
-  font: inherit;
-}
-
-input {
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-}
-
-input[type="text"] {
-  flex: 1;
-}
-
-#name {
-  color: lightgray;
 }
 
 button {
@@ -115,42 +90,6 @@ button:hover {
 button:focus-visible {
   outline: 2px solid var(--accent-border);
   outline-offset: 2px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-
-  background-color: beige;
-  border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-}
-
-li span {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  color: var(--text-li)
-}
-
-li .soon-badge {
-  color: red;
-  font-size: 1.35rem;
-}
-
-.consumed {
-  color: var(--text-muted);
-  text-decoration: line-through;
 }
 
 footer {
