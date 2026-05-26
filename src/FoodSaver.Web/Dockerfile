@@ -1,9 +1,8 @@
-FROM node:22-bookworm-slim
-
+FROM node:22-bookworm-slim AS build
 WORKDIR /app
 
 # Corepack OK in container (no Render sandbox)
-RUN corepack enable && corepack prepare yarn@4.14.1 --activate
+RUN corepack enable
 
 COPY package.json yarn.lock .yarnrc.yml ./
 
@@ -16,6 +15,11 @@ ENV VITE_API_URL=$VITE_API_URL
 
 RUN yarn build
 
-EXPOSE 3000
+FROM nginx:alpine
 
-CMD ["npx", "serve", "-s", "dist", "-l", "3000"]
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
