@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --text: black;
   --text-h: #08060d;
@@ -44,22 +48,19 @@ body {
 
 #root {
   min-height: 100svh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 48px 16px;
-  box-sizing: border-box;
+  padding: 16px;
 }
 
 .app-container {
   width: 100%;
   max-width: 720px;
 
+  margin-inline: auto;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
 
   background: var(--bg);
-  padding: 24px;
+  padding: clamp(16px, 4vw, 24px);
   box-shadow: var(--shadow);
 }

@@ -1,0 +1,35 @@
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+
+  background-color: beige;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+li span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--text-li)
+}
+
+li .soon-badge {
+  color: red;
+  font-size: 1.35rem;
+}
+
+.consumed {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}

@@ -8,6 +8,6 @@ export type Food = {
 
 export type CreateFoodRequest = {
   name: string;
-  expiryDate: string;
+  expiryDate: string; // ISO 8601 date (yyyy-mm-dd)
   quantity: number;
 };

@@ -1,12 +1,12 @@
 using System.Net;
-using FluentAssertions;
 using System.Net.Http.Json;
 
+using FluentAssertions;
+
 using FoodSaver.Api.Features.Create;
-using FoodSaver.Api.Features.GetAll;
 using FoodSaver.Api.Models;
 
-namespace FoodSaver.Api.Tests.Foods;
+namespace FoodSaver.Api.Tests;
 
 public sealed class GetFoodsTests(ApiFactory factory) : IClassFixture<ApiFactory>
 {
