@@ -1,5 +1,7 @@
 import type { Food } from './types';
 
+import './FoodList.css'
+
 type Props = {
   foods: Food[];
   onConsume: (id: string) => void | Promise<void>;
