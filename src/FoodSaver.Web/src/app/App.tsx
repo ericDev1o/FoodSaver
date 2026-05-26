@@ -1,5 +1,5 @@
 import { 
-  useEffect, 
+  useEffect,
   useState 
 } from 'react';
 
@@ -28,10 +28,9 @@ export default function App() {
 
   const isDark = theme === 'dark';
 
-  async function loadFoods() {
-    const foods = await getFoods();
-    setFoods(foods);
-  }
+  const activeFoodsCount = foods.filter(food => !food.isConsumed).length;
+
+  const foodLabel = activeFoodsCount === 1 ? "food" : "foods";
 
   async function handleCreateFood(
     request: CreateFoodRequest
@@ -45,32 +44,10 @@ export default function App() {
     await loadFoods();
   }
 
-  function toggleTheme() {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  }
-
-  function onScroll() {
-    const isScrolled = window.scrollY > 8;
-    setScrolled(prev => (prev === isScrolled ? prev : isScrolled));
-  }
-
-  const activeFoodsCount = foods.filter(
-    food => !food.isConsumed
-  ).length;
-
   useEffect(() => {
-    (async () => {
-      try{
-        const foods = await getFoods();
-        setFoods(foods);
-      }
-      catch {
-        setError("Unable to load foods.");
-      }
-      finally {
-        setIsLoading(false);
-      }
-    })();
+    loadFoods()
+    .catch(() => setError("Unable to load foods."))
+    .finally(() => setIsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -78,11 +55,12 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    window.addEventListener('scroll', onScroll);
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
     };
+
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   if(isLoading)
@@ -116,8 +94,7 @@ export default function App() {
         <FoodForm onCreate={handleCreateFood} />
 
         <p>
-          {activeFoodsCount} food
-          {activeFoodsCount > 1 ? 's' : ''}
+          {activeFoodsCount} {foodLabel}
           {' '}to consume
         </p>
 
@@ -135,4 +112,13 @@ export default function App() {
       </footer>
     </div>
   );
+
+  async function loadFoods() {
+    const foods = await getFoods();
+    setFoods(foods);
+  }
+
+  function toggleTheme() {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  }
 }

@@ -1,5 +1,6 @@
-using Scalar.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+
+using Scalar.AspNetCore;
 
 using FoodSaver.Api.Data;
 using FoodSaver.Api.Features.Create;

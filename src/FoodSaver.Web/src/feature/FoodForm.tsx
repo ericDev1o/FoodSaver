@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import { 
+  useCallback, 
+  useMemo, 
+  useState } 
+from 'react';
 
 import type { CreateFoodRequest } from './types';
 
@@ -14,39 +18,24 @@ export function FoodForm({ onCreate }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
 
-  function handleSubmit() {
+  const todayString = useMemo(() => getTodayDateString(), []);
+
+  const handleSubmit = useCallback(() => {
     setError(null);
 
-    const trimmedName = name.trim();
+    const validationError = validateFoodInput(name, expiryDate, quantity);
 
-    if (!trimmedName) {
-      setError('Food name is required.');
-      return;
-    }
-
-    if (!expiryDate) {
-      setError('Expiration date is required.');
-      return;
-    }
-
-    const today = new Date().toISOString().split('T')[0];
-
-    if (expiryDate < today) {
-      setError('Expiration date must be today or in the future.');
-      return;
-    }
-
-    if (quantity < 1) {
-      setError('Quantity must be at least 1. Please try again.')
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
     onCreate({
-      name: trimmedName,
+      name: name.trim(),
       expiryDate,
       quantity
     });
-  }
+  }, [name, expiryDate, quantity, onCreate]);
   
   return (
     <>
@@ -85,6 +74,7 @@ export function FoodForm({ onCreate }: Props) {
           id='date'
           type='date'
           value={ expiryDate }
+          min={todayString}
           onChange={(e) => {setExpiryDate(e.target.value)}}
         />
 
@@ -99,11 +89,41 @@ export function FoodForm({ onCreate }: Props) {
           type='number'
           min='1'
           value={ quantity }
-          onChange={(e) => {setQuantity(Number(e.target.value))}}
+          onChange={(e) => {setQuantity(e.target.valueAsNumber)}}
         />
 
         <button type='submit'>Add</button>
       </form>
     </>
   );
+}
+
+function validateFoodInput(
+  name: string,
+  expiry: string,
+  quantity: number
+): string | null {
+  const trimmedName = name.trim();
+
+  if (!trimmedName) {
+    return 'Food name is required.';
+  }
+
+  if (!expiry) {
+    return 'Expiration date is required.';
+  }
+
+  if (expiry < getTodayDateString()) {
+    return 'Expiration date must be today or in the future.';
+  }
+
+  if (quantity < 1) {
+    return 'Quantity must be at least 1.';
+  }
+
+  return null;
+}
+
+function getTodayDateString(): string {
+  return new Date().toISOString().split('T')[0];
 }
