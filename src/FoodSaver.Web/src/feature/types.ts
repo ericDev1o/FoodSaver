@@ -11,3 +11,9 @@ export type CreateFoodRequest = {
   expiryDate: string; // ISO 8601 date (yyyy-mm-dd)
   quantity: number;
 };
+
+export type UndoAction = {
+  foodId: string;
+  previousQuantity: number;
+  previousIsConsumed: boolean;
+};

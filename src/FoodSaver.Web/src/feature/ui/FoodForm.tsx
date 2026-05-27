@@ -4,7 +4,7 @@ import {
   useState } 
 from 'react';
 
-import type { CreateFoodRequest } from './types';
+import type { CreateFoodRequest } from '../types';
 
 import './FoodForm.css';
 

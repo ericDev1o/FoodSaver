@@ -3,14 +3,15 @@ import {
   useState 
 } from 'react';
 
-import { FoodList } from '../feature/FoodList';
-import { FoodForm } from '../feature/FoodForm';
+import { FoodList } from '../feature/ui/FoodList';
+import { FoodForm } from '../feature/ui/FoodForm';
 
 import {
   getFoods,
-  createFood,
-  consumeFood,
+  createFood
 } from '../api/food';
+
+import { useFoodActions } from '../feature/useFoodActions';
 
 import type {
   Food,
@@ -32,6 +33,14 @@ export default function App() {
 
   const foodLabel = activeFoodsCount === 1 ? "food" : "foods";
 
+  const {
+    consumeFood,
+    undo,
+    confirm,
+    snackbar,
+    snackbarFoodId
+  } = useFoodActions(foods, setFoods);
+
   async function handleCreateFood(
     request: CreateFoodRequest
   ) {
@@ -39,9 +48,11 @@ export default function App() {
     await loadFoods();
   }
 
-  async function handleConsumeFood(id: string) {
-    await consumeFood(id);
-    await loadFoods();
+  async function handleConsumeFood(
+    id: string, 
+    qty: number
+  ) {
+      consumeFood(id, qty);
   }
 
   useEffect(() => {
@@ -101,10 +112,16 @@ export default function App() {
         {foods.length === 0 ? (
             <p>Add your first food to get started.</p>
           ) : (
-            <FoodList
-              foods={foods}
-              onConsume={handleConsumeFood}
-            />
+            <>
+              <FoodList
+                foods={foods}
+                onConsume={handleConsumeFood}
+                snackbar={snackbar}
+                snackbarFoodId={snackbarFoodId}
+                onUndo={undo}
+                onConfirm={confirm}
+              />
+            </>
           )}
       </main>
       <footer>

@@ -1,13 +1,29 @@
-import type { Food } from './types';
+import type { Food } from '../types';
+
+import { Snackbar } from './Snackbar';
 
 import './FoodList.css'
 
 type Props = {
   foods: Food[];
-  onConsume: (id: string) => void | Promise<void>;
+  onConsume: (
+    id: string,
+    qty: number
+  ) => void | Promise<void>;
+  snackbar: string | null;
+  snackbarFoodId: string | null;
+  onUndo: () => void;
+  onConfirm: () => void;
 };
 
-export function FoodList({ foods, onConsume }: Props) {
+export function FoodList({ 
+  foods, 
+  onConsume,
+  snackbar,
+  snackbarFoodId,
+  onUndo,
+  onConfirm
+ }: Props) {
   const today = new Date().toISOString().split('T')[0];
 
   const todayDate = new Date();
@@ -57,7 +73,7 @@ export function FoodList({ foods, onConsume }: Props) {
 
             {!food.isConsumed && (
               <button 
-                onClick={() => {onConsume(food.id)}}
+                onClick={() => {onConsume(food.id, food.quantity)}}
                 aria-label={`Mark ${food.name} as consumed`}
               >
                 Consume
@@ -72,6 +88,14 @@ export function FoodList({ foods, onConsume }: Props) {
               <span className="soon-badge">
                 expiring soon
               </span>
+            )}
+
+            {snackbarFoodId === food.id && snackbar && (
+              <Snackbar
+                message={snackbar}
+                onUndo={onUndo}
+                onConfirm={onConfirm}
+              />
             )}
           </li>
         );
