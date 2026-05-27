@@ -34,8 +34,3 @@ li .today-badge {
   font-size: 1.35rem;
   font-weight: bold;
 }
-
-.consumed {
-  color: var(--text-muted);
-  text-decoration: line-through;
-}

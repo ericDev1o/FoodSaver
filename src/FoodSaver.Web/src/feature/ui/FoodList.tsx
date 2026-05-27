@@ -66,25 +66,19 @@ export function FoodList({
           startOfToday.setHours(0, 0, 0, 0);
 
           const isSoonToExpire = 
-            ! food.isConsumed &&
+            food.quantity > 0 &&
             expiryDate >= tomorrow && 
             expiryDate <= threeDaysLater;
 
           const isExpiringToday = 
-            ! food.isConsumed &&
+            food.quantity > 0 &&
             expiryDate >= startOfToday &&
             expiryDate < tomorrow;
 
           return (
             <li 
-              key={food.id} 
-              className={food.isConsumed ? 'consumed' : ''}
-              aria-label={`
-                ${food.name},
-                ${food.isConsumed 
-                ? 'consumed'
-                : 'active' }
-              `}
+              key={food.id}
+              aria-label={`${food.name}, quantity ${food.quantity}`}
             >
               <span>
                 {food.name} x{food.quantity}
@@ -102,15 +96,15 @@ export function FoodList({
                 }
               </span>
 
-              {! food.isConsumed && (
+              {food.quantity > 0 && (
               <>
                 <button
                   onClick={() => {onConsume(food.id, 1)}}
                   aria-label={`
-                    Mark ${food.quantity === 1 
+                    Consume ${food.quantity === 1 
                       ? food.name :
                       `1 ${food.name}`
-                    } as consumed
+                    }
                   `}
                 >
                   {food.quantity === 1
@@ -121,18 +115,13 @@ export function FoodList({
                 {food.quantity > 1 && (
                   <button
                     onClick={() => {onConsume(food.id, food.quantity)}}
-                    aria-label={`Mark all ${food.name} as consumed`}
+                    aria-label={`Consume all ${food.name}`}
                   >
                     Consume all
                   </button>
                 )}
             </>
             )}
-
-
-              {food.isConsumed && (
-                <small aria-label="Food already consumed">consumed</small>
-              )}
 
               {isSoonToExpire && (
                 <span className='soon-badge'>

@@ -26,15 +26,12 @@ export function useFoodActions(
 
     const nextQuantity = Math.max(0, food.quantity - qty);
 
-    const nextIsConsumed = nextQuantity === 0;
-
     setFoods(prev =>
       prev.map(f =>
         f.id === id
           ? {
               ...f,
               quantity: nextQuantity,
-              isConsumed: nextIsConsumed
             }
           : f
       )
@@ -43,7 +40,6 @@ export function useFoodActions(
     setUndoAction({
       foodId: id,
       previousQuantity: food.quantity,
-      previousIsConsumed: food.isConsumed
     });
 
     setSnackbar(`${food.name} consumed`);
@@ -64,7 +60,6 @@ export function useFoodActions(
         ? {
             ...f,
             quantity: undoAction.previousQuantity,
-            isConsumed: undoAction.previousIsConsumed
         }
         : f
       )

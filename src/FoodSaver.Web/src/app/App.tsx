@@ -39,16 +39,32 @@ export default function App() {
 
   async function handleCreateFood(
     request: CreateFoodRequest
-  ) {
-    await createFood(request);
-    await loadFoods();
+  ) 
+  {
+    const newFood = await createFood(request);
+
+    setFoods(prev => [...prev, newFood]);
   }
 
-  async function handleConsumeFood(
+  function handleConsumeFood(
     id: string, 
     qty: number
-  ) {
-      consumeFood(id, qty);
+  ) 
+  {
+    consumeFood(id, qty);
+
+    setFoods(prev =>
+      prev
+        .map(f =>
+          f.id === id
+            ? {
+                ...f,
+                quantity: f.quantity - qty
+              }
+            : f
+        )
+        .filter(f => f.quantity > 0)
+    );
   }
 
   useEffect(() => {

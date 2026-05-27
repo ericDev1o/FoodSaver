@@ -40,9 +40,16 @@ export async function createFood(request: CreateFoodRequest): Promise<Food> {
   return await response.json() as Food;
 }
 
-export async function consumeFood(id: string): Promise<void> {
+export async function consumeFood(
+  id: string,
+  qty: number
+): Promise<void> {
   const response = await fetch(`${API_URL}/foods/${id}/consume`, {
     method: 'PATCH',
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ qty })
   });
 
   await ensureSuccess(response);
