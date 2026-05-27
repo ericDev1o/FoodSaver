@@ -33,110 +33,130 @@ export function FoodList({
   const tomorrow = new Date(todayDate);
   tomorrow.setDate(todayDate.getDate() + 1);
 
-  const sortedFoods = [...foods].sort(
+  const visibleFoods = foods.filter(
+    food => 
+      food.quantity > 0 && 
+      food.expiryDate >= today
+  );
+
+  const sortedFoods = [...visibleFoods].sort(
     (a, b) => a.expiryDate.localeCompare(b.expiryDate)
   );
+
+  const activeFoodsCount = sortedFoods.reduce(
+    (total, food) => total + food.quantity,
+    0
+  );
+  const foodLabel = activeFoodsCount === 1 
+    ? "food" 
+    : "foods";
   
   return (
-    <ul>
-      {sortedFoods.map((food) => {
-        const isExpired = food.expiryDate < today; 
-        const expiryDate = new Date(food.expiryDate);
-        expiryDate.setHours(0, 0, 0, 0);
-        const startOfToday = new Date(todayDate);
-        startOfToday.setHours(0, 0, 0, 0);
+    <>
+      <p>
+          {activeFoodsCount} {foodLabel}
+          {' '}to consume
+        </p>
+      <ul>
+        {sortedFoods.map((food) => {
+          const isExpired = food.expiryDate < today; 
+          const expiryDate = new Date(food.expiryDate);
+          expiryDate.setHours(0, 0, 0, 0);
+          const startOfToday = new Date(todayDate);
+          startOfToday.setHours(0, 0, 0, 0);
 
-        const isSoonToExpire = 
-          ! food.isConsumed &&
-          expiryDate >= tomorrow && 
-          expiryDate <= threeDaysLater;
+          const isSoonToExpire = 
+            ! food.isConsumed &&
+            expiryDate >= tomorrow && 
+            expiryDate <= threeDaysLater;
 
-        const isExpiringToday = 
-          ! food.isConsumed &&
-          expiryDate >= startOfToday &&
-          expiryDate < tomorrow;
+          const isExpiringToday = 
+            ! food.isConsumed &&
+            expiryDate >= startOfToday &&
+            expiryDate < tomorrow;
 
-        return (
-          <li 
-            key={food.id} 
-            className={food.isConsumed ? 'consumed' : ''}
-            aria-label={`
-              ${food.name},
-              ${food.isConsumed 
-              ? 'consumed'
-              : 'active' }
-            `}
-          >
-            <span>
-              {food.name} x{food.quantity}
-              {isExpired ? ' expired ' : ' expires '} 
-              on {' '} 
-              {new Date(food.expiryDate)
-                .toLocaleDateString(
-                  'en-GB', 
-                  {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                  }
-                )
-              }
-            </span>
+          return (
+            <li 
+              key={food.id} 
+              className={food.isConsumed ? 'consumed' : ''}
+              aria-label={`
+                ${food.name},
+                ${food.isConsumed 
+                ? 'consumed'
+                : 'active' }
+              `}
+            >
+              <span>
+                {food.name} x{food.quantity}
+                {isExpired ? ' expired ' : ' expires '} 
+                on {' '} 
+                {new Date(food.expiryDate)
+                  .toLocaleDateString(
+                    'en-GB', 
+                    {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric'
+                    }
+                  )
+                }
+              </span>
 
-            {! food.isConsumed && (
-            <>
-              <button
-                onClick={() => {onConsume(food.id, 1)}}
-                aria-label={`
-                  Mark ${food.quantity === 1 
-                    ? food.name :
-                    `1 ${food.name}`
-                   } as consumed
-                `}
-              >
-                {food.quantity === 1
-                ? 'Consume'
-                : 'Consume 1'}
-              </button>
-
-              {food.quantity > 1 && (
+              {! food.isConsumed && (
+              <>
                 <button
-                  onClick={() => {onConsume(food.id, food.quantity)}}
-                  aria-label={`Mark all ${food.name} as consumed`}
+                  onClick={() => {onConsume(food.id, 1)}}
+                  aria-label={`
+                    Mark ${food.quantity === 1 
+                      ? food.name :
+                      `1 ${food.name}`
+                    } as consumed
+                  `}
                 >
-                  Consume all
+                  {food.quantity === 1
+                  ? 'Consume'
+                  : 'Consume 1'}
                 </button>
+
+                {food.quantity > 1 && (
+                  <button
+                    onClick={() => {onConsume(food.id, food.quantity)}}
+                    aria-label={`Mark all ${food.name} as consumed`}
+                  >
+                    Consume all
+                  </button>
+                )}
+            </>
+            )}
+
+
+              {food.isConsumed && (
+                <small aria-label="Food already consumed">consumed</small>
               )}
-          </>
-          )}
 
+              {isSoonToExpire && (
+                <span className='soon-badge'>
+                  expiring soon
+                </span>
+              )}
 
-            {food.isConsumed && (
-              <small aria-label="Food already consumed">consumed</small>
-            )}
+              {isExpiringToday && (
+                <span className='today-badge'>
+                  expiring today !
+                </span>
+              )}
 
-            {isSoonToExpire && (
-              <span className='soon-badge'>
-                expiring soon
-              </span>
-            )}
-
-            {isExpiringToday && (
-              <span className='today-badge'>
-                expiring today !
-              </span>
-            )}
-
-            {snackbarFoodId === food.id && snackbar && (
-              <Snackbar
-                message={snackbar}
-                onUndo={onUndo}
-                onConfirm={onConfirm}
-              />
-            )}
-          </li>
-        );
-      })}
-    </ul>
+              {snackbarFoodId === food.id && snackbar && (
+                <Snackbar
+                  message={snackbar}
+                  onUndo={onUndo}
+                  onConfirm={onConfirm}
+                />
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }

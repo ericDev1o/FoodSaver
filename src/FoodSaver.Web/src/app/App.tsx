@@ -29,10 +29,6 @@ export default function App() {
 
   const isDark = theme === 'dark';
 
-  const activeFoodsCount = foods.filter(food => !food.isConsumed).length;
-
-  const foodLabel = activeFoodsCount === 1 ? "food" : "foods";
-
   const {
     consumeFood,
     undo,
@@ -104,11 +100,6 @@ export default function App() {
       <main>
         <FoodForm onCreate={handleCreateFood} />
 
-        <p>
-          {activeFoodsCount} {foodLabel}
-          {' '}to consume
-        </p>
-
         {foods.length === 0 ? (
             <p>Add your first food to get started.</p>
           ) : (
@@ -125,7 +116,7 @@ export default function App() {
           )}
       </main>
       <footer>
-        <p>&copy; 2026 FoodSaver. All rights reserved.</p>
+        <p>2026 FoodSaver · BSD-2 licensed</p>
       </footer>
     </div>
   );
