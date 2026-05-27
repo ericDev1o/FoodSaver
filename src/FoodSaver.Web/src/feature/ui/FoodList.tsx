@@ -27,8 +27,11 @@ export function FoodList({
   const today = new Date().toISOString().split('T')[0];
 
   const todayDate = new Date();
-  const threeDaysLater = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const threeDaysLater = new Date(todayDate);
   threeDaysLater.setDate(todayDate.getDate() + 3);
+  const tomorrow = new Date(todayDate);
+  tomorrow.setDate(todayDate.getDate() + 1);
 
   const sortedFoods = [...foods].sort(
     (a, b) => a.expiryDate.localeCompare(b.expiryDate)
@@ -38,11 +41,20 @@ export function FoodList({
     <ul>
       {sortedFoods.map((food) => {
         const isExpired = food.expiryDate < today; 
-        const expiry = new Date(food.expiryDate);
+        const expiryDate = new Date(food.expiryDate);
+        expiryDate.setHours(0, 0, 0, 0);
+        const startOfToday = new Date(todayDate);
+        startOfToday.setHours(0, 0, 0, 0);
+
         const isSoonToExpire = 
           ! food.isConsumed &&
-          expiry >= todayDate && 
-          expiry <= threeDaysLater;
+          expiryDate >= tomorrow && 
+          expiryDate <= threeDaysLater;
+
+        const isExpiringToday = 
+          ! food.isConsumed &&
+          expiryDate >= startOfToday &&
+          expiryDate < tomorrow;
 
         return (
           <li 
@@ -85,8 +97,14 @@ export function FoodList({
             )}
 
             {isSoonToExpire && (
-              <span className="soon-badge">
+              <span className='soon-badge'>
                 expiring soon
+              </span>
+            )}
+
+            {isExpiringToday && (
+              <span className='today-badge'>
+                expiring today !
               </span>
             )}
 

@@ -29,6 +29,12 @@ li .soon-badge {
   font-size: 1.35rem;
 }
 
+li .today-badge {
+  color: red;
+  font-size: 1.35rem;
+  font-weight: bold;
+}
+
 .consumed {
   color: var(--text-muted);
   text-decoration: line-through;
