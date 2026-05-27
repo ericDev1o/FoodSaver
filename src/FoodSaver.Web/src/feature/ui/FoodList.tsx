@@ -83,14 +83,33 @@ export function FoodList({
               }
             </span>
 
-            {!food.isConsumed && (
-              <button 
-                onClick={() => {onConsume(food.id, food.quantity)}}
-                aria-label={`Mark ${food.name} as consumed`}
+            {! food.isConsumed && (
+            <>
+              <button
+                onClick={() => {onConsume(food.id, 1)}}
+                aria-label={`
+                  Mark ${food.quantity === 1 
+                    ? food.name :
+                    `1 ${food.name}`
+                   } as consumed
+                `}
               >
-                Consume
+                {food.quantity === 1
+                ? 'Consume'
+                : 'Consume 1'}
               </button>
-            )}
+
+              {food.quantity > 1 && (
+                <button
+                  onClick={() => {onConsume(food.id, food.quantity)}}
+                  aria-label={`Mark all ${food.name} as consumed`}
+                >
+                  Consume all
+                </button>
+              )}
+          </>
+          )}
+
 
             {food.isConsumed && (
               <small aria-label="Food already consumed">consumed</small>
