@@ -4,10 +4,6 @@
 describe('food workflow', () => {
   beforeEach(() => {
     // Arrange
-    cy.intercept('POST', '**/foods').as('createFood');
-    cy.intercept('PATCH', '**/foods/*/consume').as('consumeFood');
-    cy.intercept('GET', '**/foods').as('getFoods');
-
     cy.request({
       url: 'https://foodsaver-api-00tb.onrender.com/foods'
     });
@@ -31,7 +27,7 @@ describe('food workflow', () => {
         cy.findByRole('button', { name: /consume/i }).click();
     });
 
-    confirmConsume()
+    cy.findByRole('button', { name: /confirm/i }).click();
 
     // Assert - consumed
     cy.contains('li', foodName)
@@ -53,7 +49,7 @@ describe('food workflow', () => {
       cy.findByRole('button', { name: /consume 1/i }).click();
     });
 
-    confirmConsume()
+    cy.findByRole('button', { name: /confirm/i }).click();
 
     // Assert - consumed 1
     cy.contains('li', foodName)
@@ -76,7 +72,7 @@ describe('food workflow', () => {
       cy.findByRole('button', { name: /consume all/i }).click();
     });
 
-    confirmConsume()
+  cy.findByRole('button', { name: /confirm/i }).click();
 
     // Assert - consumed all
     cy.contains('li', foodName).should('not.exist');
@@ -88,18 +84,8 @@ function createFood(
   quantity: number
 ) {
   cy.findByPlaceholderText(/food name/i).type(foodName);
-  cy.get('input[type="date"]').type('2026-12-31');
+  cy.get('input[type="date"]').clear().type('2026-12-31');
   cy.get('input[type="number"]').clear().type(quantity.toString());
 
   cy.findByRole('button', { name: /add/i }).click();
-
-  cy.wait('@createFood');
-  cy.wait('@getFoods');
-}
-
-function confirmConsume() {
-  cy.findByRole('button', { name: /confirm/i }).click();
-
-  cy.wait('@consumeFood');
-  cy.wait('@getFoods');
 }
