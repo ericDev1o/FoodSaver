@@ -29,30 +29,28 @@ export default function App() {
 
   const isDark = theme === 'dark';
 
-  const activeFoodsCount = foods.filter(food => !food.isConsumed).length;
-
-  const foodLabel = activeFoodsCount === 1 ? "food" : "foods";
-
   const {
     consumeFood,
     undo,
     confirm,
-    snackbar,
-    snackbarFoodId
+    snackbar
   } = useFoodActions(foods, setFoods);
 
   async function handleCreateFood(
     request: CreateFoodRequest
-  ) {
-    await createFood(request);
-    await loadFoods();
+  ) 
+  {
+    const newFood = await createFood(request);
+
+    setFoods(prev => [...prev, newFood]);
   }
 
-  async function handleConsumeFood(
+  function handleConsumeFood(
     id: string, 
     qty: number
-  ) {
-      consumeFood(id, qty);
+  ) 
+  {
+    consumeFood(id, qty);
   }
 
   useEffect(() => {
@@ -104,11 +102,6 @@ export default function App() {
       <main>
         <FoodForm onCreate={handleCreateFood} />
 
-        <p>
-          {activeFoodsCount} {foodLabel}
-          {' '}to consume
-        </p>
-
         {foods.length === 0 ? (
             <p>Add your first food to get started.</p>
           ) : (
@@ -117,7 +110,6 @@ export default function App() {
                 foods={foods}
                 onConsume={handleConsumeFood}
                 snackbar={snackbar}
-                snackbarFoodId={snackbarFoodId}
                 onUndo={undo}
                 onConfirm={confirm}
               />
@@ -125,7 +117,7 @@ export default function App() {
           )}
       </main>
       <footer>
-        <p>&copy; 2026 FoodSaver. All rights reserved.</p>
+        <p>2026 FoodSaver · BSD-2 licensed</p>
       </footer>
     </div>
   );

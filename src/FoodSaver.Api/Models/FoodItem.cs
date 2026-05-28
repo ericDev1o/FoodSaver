@@ -8,7 +8,5 @@ public sealed class FoodItem
 
     public required DateOnly ExpiryDate { get; init; }
 
-    public bool IsConsumed { get; set; }
-
-    public required int Quantity { get; init; } = 1;
+    public required int Quantity { get; set; } = 1;
 }

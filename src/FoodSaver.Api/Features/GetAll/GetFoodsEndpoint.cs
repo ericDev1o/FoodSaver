@@ -15,6 +15,7 @@ public static class GetFoodsEndpoint
         {
             List<FoodItem> foods = await db.FoodItems
                 .AsNoTracking()
+                .Where(f => f.Quantity > 0)
                 .ToListAsync(ct);
 
             return Results.Ok(foods);
