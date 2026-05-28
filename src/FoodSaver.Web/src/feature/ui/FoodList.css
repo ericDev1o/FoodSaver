@@ -8,6 +8,8 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 
   padding: 1rem;
   margin-bottom: 0.75rem;
