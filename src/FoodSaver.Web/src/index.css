@@ -6,7 +6,6 @@
   --text: black;
   --text-h: #08060d;
   --text-li: black;
-  --text-muted: #5f6368;
 
   --bg: #fff;
   --border: black;
@@ -35,7 +34,6 @@
 :root[data-theme="dark"] {
   --text: white;
   --text-h: #f3f4f6;
-  --text-muted: #c1c7d0;
   --bg: #16171d;
   --border: #d1d5db;
 }
@@ -59,6 +57,7 @@ body {
 
   display: flex;
   flex-direction: column;
+  text-align: center;
 
   background: var(--bg);
   padding: clamp(16px, 4vw, 24px);

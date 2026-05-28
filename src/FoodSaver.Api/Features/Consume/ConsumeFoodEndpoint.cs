@@ -12,6 +12,7 @@ public static class ConsumeFoodEndpoint
     {
         app.MapPatch("/foods/{id:guid}/consume", static async (
             Guid id,
+            ConsumeFoodRequest req,
             AppDbContext db,
             CancellationToken ct) =>
         {
@@ -23,7 +24,12 @@ public static class ConsumeFoodEndpoint
                 return Results.NotFound();
             }
 
-            food.IsConsumed = true;
+            food.Quantity -= req.Qty;
+
+            if (food.Quantity <= 0)
+            {
+                db.FoodItems.Remove(food);
+            }
 
             await db.SaveChangesAsync(ct);
 

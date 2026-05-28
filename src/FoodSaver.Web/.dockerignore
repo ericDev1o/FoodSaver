@@ -2,6 +2,11 @@ node_modules
 
 dist
 
+cypress
+cypress.config.ts
+
+Dockerfile
+
 .yarn/install-state.gz
 
 .env*

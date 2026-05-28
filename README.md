@@ -6,7 +6,7 @@ Track your food expiry dates. Reduce household waste.
 
 - Track food expiry dates
 - Highlight products expiring soon
-- Mark products as consumed
+- Consume food quantities individually or all at once
 
 ## User Experience
 

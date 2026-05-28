@@ -8,6 +8,8 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 
   padding: 1rem;
   margin-bottom: 0.75rem;
@@ -24,12 +26,24 @@ li span {
   color: var(--text-li)
 }
 
+li .actions {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+li .undo {
+  background-color: red;
+  color: white;
+}
+
 li .soon-badge {
   color: red;
   font-size: 1.35rem;
 }
 
-.consumed {
-  color: var(--text-muted);
-  text-decoration: line-through;
+li .today-badge {
+  color: red;
+  font-size: 1.35rem;
+  font-weight: bold;
 }

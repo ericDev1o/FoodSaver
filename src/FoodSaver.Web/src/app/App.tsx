@@ -3,14 +3,15 @@ import {
   useState 
 } from 'react';
 
-import { FoodList } from '../feature/FoodList';
-import { FoodForm } from '../feature/FoodForm';
+import { FoodList } from '../feature/ui/FoodList';
+import { FoodForm } from '../feature/ui/FoodForm';
 
 import {
   getFoods,
-  createFood,
-  consumeFood,
+  createFood
 } from '../api/food';
+
+import { useFoodActions } from '../feature/useFoodActions';
 
 import type {
   Food,
@@ -28,20 +29,20 @@ export default function App() {
 
   const isDark = theme === 'dark';
 
-  const activeFoodsCount = foods.filter(food => !food.isConsumed).length;
-
-  const foodLabel = activeFoodsCount === 1 ? "food" : "foods";
+  const {
+    consumeFood,
+    undo,
+    confirm,
+    undoAction
+  } = useFoodActions(foods, setFoods);
 
   async function handleCreateFood(
     request: CreateFoodRequest
-  ) {
-    await createFood(request);
-    await loadFoods();
-  }
+  ) 
+  {
+    const newFood = await createFood(request);
 
-  async function handleConsumeFood(id: string) {
-    await consumeFood(id);
-    await loadFoods();
+    setFoods(prev => [...prev, newFood]);
   }
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function App() {
     return (
     <p
       className='error-text'
-      role='alert'
+      aria-live='assertive'
     >
         {error}
     </p>
@@ -93,22 +94,20 @@ export default function App() {
       <main>
         <FoodForm onCreate={handleCreateFood} />
 
-        <p>
-          {activeFoodsCount} {foodLabel}
-          {' '}to consume
-        </p>
-
         {foods.length === 0 ? (
             <p>Add your first food to get started.</p>
           ) : (
             <FoodList
               foods={foods}
-              onConsume={handleConsumeFood}
+              onConsume={consumeFood}
+              onUndo={undo}
+              onConfirm={confirm}
+              undoAction={undoAction}
             />
           )}
       </main>
       <footer>
-        <p>&copy; 2026 FoodSaver. All rights reserved.</p>
+        <p>2026 FoodSaver · BSD-2 licensed</p>
       </footer>
     </div>
   );
