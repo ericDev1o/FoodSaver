@@ -12,3 +12,13 @@ Given a user enters a food item name and expiry date
 When the item is saved
 Then the item appears in tracked foods
 And its expiry date is preserved
+
+## Scope
+
+The feature includes:
+
+- adding a food item
+- tracking expiry date
+- highlighting expiry status
+- consuming quantities individually
+- consuming all remaining quantity

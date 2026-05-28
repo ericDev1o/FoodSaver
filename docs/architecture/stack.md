@@ -16,3 +16,4 @@
 - RTK Query
 - Cypress
 - axe-core
+- React Native

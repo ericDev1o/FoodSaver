@@ -1,19 +1,37 @@
 # FoodSaver
 
-Track your food expiry dates. Reduce household waste.
+Track food expiry dates and reduce household waste.
 
 ## Features
 
 - Track food expiry dates
-- Highlight products expiring soon
-- Consume food quantities individually or all at once
+- Consume one quantity or all remaining quantities
+- Highlight food expiring today
+- Highlight food expiring soon
 
-## User Experience
+## Tech stack
 
-- Lightweight interface
-- Accessible UI
+### Backend
 
-## Run
+- ASP.NET Core (.NET 10)
+- Minimal API
+- Entity Framework Core
+- SQLite
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- ESLint
+
+### Testing
+
+- xUnit
+- Cypress
+- axe-core
+
+## Run locally
 
 ### Backend
 
@@ -26,55 +44,47 @@ dotnet run --no-build
 
 ### Frontend
 
-Please 
-- run once 
-
-```bash
-yarn test:e2e
-```
-
-on previous deployed version to ensure non-regression 
-
-- switch to local dev env before yarn test:e2e
-    - please prefer 
-        - F12 DevTools to 
-            - console.trace / console.time to 
-                - console.log
-- reset to production-clean code
-
 ```bash
 yarn install
 yarn lint
 yarn build
-yarn test:e2e
-yarn preview
-yarn upgrade-interactive
+yarn dev
 ```
-...git commit on [render](https://dashboard.render.com/) auto-deploy set branch
 
-run once after deploy / cold start (to avoid HTTP 503)
+## Deploy
+
+Deployment is hosted on [render](https://dashboard.render.com/) with auto-deploy enabled on push to the deployment branch.
+
+## Test End-to-End
 
 ```bash
 yarn test:e2e
 ```
 
-#### Environment variable files
+Due to backend cold starts on Render free hosting, the first E2E run may occasionally require a retry.
 
-##### .env
+## Documentation
 
-VITE_API_URL=http://localhost:8080
+The project documentation lives in `/docs/`:
 
-##### .env.production
-
-VITE_API_URL=https://foodsaver-api-00tb.onrender.com
+- `product/` → product requirements and user behavior
+- `architecture/` → technical stack and Architecture Decision Records 
+- `testing/` → testing strategy
 
 ## Architecture
 
-The project follows a feature-focused vertical slice architecture.
+FoodSaver follows a feature-based vertical slice architecture.
 
-Detailed documentation is available in `/docs/`:
+## Environment
 
-- `product/`
-- `architecture/`
-- `decisions/`
-- `testing/`
+### .env
+
+```code
+VITE_API_URL=http://localhost:8080
+```
+
+### .env.production
+
+```code
+VITE_API_URL=https://foodsaver-api-00tb.onrender.com
+```
