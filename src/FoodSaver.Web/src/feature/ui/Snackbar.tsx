@@ -12,7 +12,7 @@ export function Snackbar({
      onConfirm
 }: Props) {
     return (
-        <div>
+        <div className='snackbar'>
             <button
                 onClick={onUndo}
                 className='cancel'

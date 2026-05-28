@@ -79,7 +79,7 @@ export default function App() {
     return (
     <p
       className='error-text'
-      role='alert'
+      aria-live='assertive'
     >
         {error}
     </p>
