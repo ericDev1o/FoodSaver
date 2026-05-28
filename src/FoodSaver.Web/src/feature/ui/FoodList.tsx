@@ -11,7 +11,6 @@ type Props = {
     qty: number
   ) => void;
   snackbar: string | null;
-  snackbarFoodId: string | null;
   onUndo: () => void;
   onConfirm: () => void;
 };
@@ -20,7 +19,6 @@ export function FoodList({
   foods, 
   onConsume,
   snackbar,
-  snackbarFoodId,
   onUndo,
   onConfirm
  }: Props) {
@@ -35,10 +33,8 @@ export function FoodList({
 
   const visibleFoods = foods.filter(
   food =>
-    (
-      food.quantity > 0 ||
-      food.id === snackbarFoodId
-    ) &&
+    food.quantity > 0
+    &&
     food.expiryDate >= today
 );
 
@@ -137,18 +133,17 @@ export function FoodList({
                   expiring today !
                 </span>
               )}
-
-              {snackbarFoodId === food.id && snackbar && (
-                <Snackbar
-                  message={snackbar}
-                  onUndo={onUndo}
-                  onConfirm={onConfirm}
-                />
-              )}
             </li>
           );
         })}
       </ul>
+       {snackbar && (
+          <Snackbar
+            message={snackbar}
+            onUndo={onUndo}
+            onConfirm={onConfirm}
+          />
+        )}
     </>
   );
 }

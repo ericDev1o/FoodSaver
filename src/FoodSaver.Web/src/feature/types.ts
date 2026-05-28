@@ -14,4 +14,5 @@ export type CreateFoodRequest = {
 export type UndoAction = {
   foodId: string;
   previousQuantity: number;
+  qty: number;
 };

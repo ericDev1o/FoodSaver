@@ -16,10 +16,10 @@ export function useFoodActions(
   const [snackbar, setSnackbar] =
     useState<string | null>(null);
 
-  const [snackbarFoodId, setSnackbarFoodId] =
-    useState<string | null>(null);
-
-  const consumeFood = (id: string) => {
+  const consumeFood = (
+      id: string,
+      qty: number
+  ) => {
     const food = foods.find(f => f.id === id);
 
     if (!food) return;
@@ -27,23 +27,14 @@ export function useFoodActions(
     setUndoAction({
       foodId: id,
       previousQuantity: food.quantity,
+      qty
     });
 
-    setSnackbarFoodId(id);
     setSnackbar(`${food.name} consumed`);
 
     setTimeout(() => {
-      if (snackbarFoodId) {
-        setFoods(prev =>
-          prev.filter(f =>
-            f.id !== snackbarFoodId || f.quantity > 0
-          )
-        );
-      }
-
       setUndoAction(null);
       setSnackbar(null);
-      setSnackbarFoodId(null);
     }, 5000
     );
   };
@@ -51,41 +42,37 @@ export function useFoodActions(
   const undo = () => {
     if (!undoAction) return;
 
-    setFoods(prev => 
-      prev.map(f => 
-        f.id === undoAction.foodId
-        ? {
-            ...f,
-            quantity: undoAction.previousQuantity,
-        }
-        : f
-      )
-    );
-
     setUndoAction(null);
     setSnackbar(null);
-    setSnackbarFoodId(null);
   }
 
   const confirm = () => {
-    if (snackbarFoodId) {
-      setFoods(prev =>
-        prev.filter(f =>
-          f.id !== snackbarFoodId || f.quantity > 0
-        )
-      );
-    }
+     if (!undoAction) return;
+
+  setFoods(prev =>
+    prev
+      .map(f =>
+        f.id === undoAction.foodId
+          ? {
+              ...f,
+              quantity: Math.max(
+                0,
+                f.quantity - undoAction.qty
+              ),
+            }
+          : f
+      )
+      .filter(f => f.quantity > 0)
+  );
 
     setUndoAction(null);
     setSnackbar(null);
-    setSnackbarFoodId(null);
   }
 
   return {
     consumeFood,
     undo,
     confirm,
-    snackbar,
-    snackbarFoodId
+    snackbar
   };
 }

@@ -33,8 +33,7 @@ export default function App() {
     consumeFood,
     undo,
     confirm,
-    snackbar,
-    snackbarFoodId
+    snackbar
   } = useFoodActions(foods, setFoods);
 
   async function handleCreateFood(
@@ -51,23 +50,7 @@ export default function App() {
     qty: number
   ) 
   {
-    setFoods(prev => {
-      const food = prev.find(f => f.id === id);
-
-      if (!food) return prev;
-
-      consumeFood(id);
-
-      return prev
-        .map(f =>
-          f.id === id
-            ? {
-                ...f,
-                quantity: f.quantity - qty,
-              }
-            : f
-        );
-    });
+    consumeFood(id, qty);
   }
 
   useEffect(() => {
@@ -127,7 +110,6 @@ export default function App() {
                 foods={foods}
                 onConsume={handleConsumeFood}
                 snackbar={snackbar}
-                snackbarFoodId={snackbarFoodId}
                 onUndo={undo}
                 onConfirm={confirm}
               />
