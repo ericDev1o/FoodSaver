@@ -51,20 +51,23 @@ export default function App() {
     qty: number
   ) 
   {
-    consumeFood(id, qty);
+    setFoods(prev => {
+      const food = prev.find(f => f.id === id);
 
-    setFoods(prev =>
-      prev
+      if (!food) return prev;
+
+      consumeFood(id);
+
+      return prev
         .map(f =>
           f.id === id
             ? {
                 ...f,
-                quantity: f.quantity - qty
+                quantity: f.quantity - qty,
               }
             : f
-        )
-        .filter(f => f.quantity > 0)
-    );
+        );
+    });
   }
 
   useEffect(() => {

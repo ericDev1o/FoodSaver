@@ -9,7 +9,7 @@ type Props = {
   onConsume: (
     id: string,
     qty: number
-  ) => void | Promise<void>;
+  ) => void;
   snackbar: string | null;
   snackbarFoodId: string | null;
   onUndo: () => void;
@@ -34,10 +34,13 @@ export function FoodList({
   tomorrow.setDate(todayDate.getDate() + 1);
 
   const visibleFoods = foods.filter(
-    food => 
-      food.quantity > 0 && 
-      food.expiryDate >= today
-  );
+  food =>
+    (
+      food.quantity > 0 ||
+      food.id === snackbarFoodId
+    ) &&
+    food.expiryDate >= today
+);
 
   const sortedFoods = [...visibleFoods].sort(
     (a, b) => a.expiryDate.localeCompare(b.expiryDate)

@@ -16,37 +16,34 @@ export function useFoodActions(
   const [snackbar, setSnackbar] =
     useState<string | null>(null);
 
-  const consumeFood = (
-    id: string,
-    qty: number
-  ) => {
+  const [snackbarFoodId, setSnackbarFoodId] =
+    useState<string | null>(null);
+
+  const consumeFood = (id: string) => {
     const food = foods.find(f => f.id === id);
 
     if (!food) return;
-
-    const nextQuantity = Math.max(0, food.quantity - qty);
-
-    setFoods(prev =>
-      prev.map(f =>
-        f.id === id
-          ? {
-              ...f,
-              quantity: nextQuantity,
-            }
-          : f
-      )
-    );
 
     setUndoAction({
       foodId: id,
       previousQuantity: food.quantity,
     });
 
+    setSnackbarFoodId(id);
     setSnackbar(`${food.name} consumed`);
 
     setTimeout(() => {
+      if (snackbarFoodId) {
+        setFoods(prev =>
+          prev.filter(f =>
+            f.id !== snackbarFoodId || f.quantity > 0
+          )
+        );
+      }
+
       setUndoAction(null);
       setSnackbar(null);
+      setSnackbarFoodId(null);
     }, 5000
     );
   };
@@ -67,11 +64,21 @@ export function useFoodActions(
 
     setUndoAction(null);
     setSnackbar(null);
+    setSnackbarFoodId(null);
   }
 
   const confirm = () => {
+    if (snackbarFoodId) {
+      setFoods(prev =>
+        prev.filter(f =>
+          f.id !== snackbarFoodId || f.quantity > 0
+        )
+      );
+    }
+
     setUndoAction(null);
     setSnackbar(null);
+    setSnackbarFoodId(null);
   }
 
   return {
@@ -79,6 +86,6 @@ export function useFoodActions(
     undo,
     confirm,
     snackbar,
-    snackbarFoodId: undoAction?.foodId ?? null
+    snackbarFoodId
   };
 }
