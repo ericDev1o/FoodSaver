@@ -26,6 +26,17 @@ li span {
   color: var(--text-li)
 }
 
+li .actions {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+li .undo {
+  background-color: red;
+  color: white;
+}
+
 li .soon-badge {
   color: red;
   font-size: 1.35rem;

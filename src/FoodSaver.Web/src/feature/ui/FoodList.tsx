@@ -1,6 +1,7 @@
-import type { Food } from '../types';
-
-import { Snackbar } from './Snackbar';
+import type { 
+  Food, 
+  UndoAction
+} from '../types';
 
 import './FoodList.css'
 
@@ -10,17 +11,17 @@ type Props = {
     id: string,
     qty: number
   ) => void;
-  snackbar: string | null;
   onUndo: () => void;
   onConfirm: () => void;
+  undoAction: UndoAction | null;
 };
 
 export function FoodList({ 
   foods, 
   onConsume,
-  snackbar,
   onUndo,
-  onConfirm
+  onConfirm,
+  undoAction
  }: Props) {
   const today = new Date().toISOString().split('T')[0];
 
@@ -94,16 +95,36 @@ export function FoodList({
 
               {food.quantity > 0 && (
               <>
-                <button onClick={() => {onConsume(food.id, 1)}}>
+                <button onClick={() => {
+                  onConsume(food.id, 1);
+                }}
+                >
                   {food.quantity === 1
                   ? 'Consume'
                   : 'Consume 1'}
                 </button>
 
                 {food.quantity > 1 && (
-                  <button onClick={() => {onConsume(food.id, food.quantity)}}>
+                  <button onClick={() => {
+                    onConsume(food.id, food.quantity);
+                  }}
+                  >
                     Consume all
                   </button>
+                )}
+
+                {undoAction?.foodId === food.id && (
+                  <div className="actions">
+                    <button 
+                      className='undo'
+                      onClick={() => onUndo()}>
+                      Undo
+                    </button>
+
+                    <button onClick={() => onConfirm()}>
+                      Confirm
+                    </button>
+                  </div>
                 )}
             </>
             )}
@@ -123,13 +144,6 @@ export function FoodList({
           );
         })}
       </ul>
-       {snackbar && (
-          <Snackbar
-            message={snackbar}
-            onUndo={onUndo}
-            onConfirm={onConfirm}
-          />
-        )}
     </>
   );
 }

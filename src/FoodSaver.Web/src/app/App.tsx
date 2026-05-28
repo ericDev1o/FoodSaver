@@ -33,7 +33,7 @@ export default function App() {
     consumeFood,
     undo,
     confirm,
-    snackbar
+    undoAction
   } = useFoodActions(foods, setFoods);
 
   async function handleCreateFood(
@@ -43,14 +43,6 @@ export default function App() {
     const newFood = await createFood(request);
 
     setFoods(prev => [...prev, newFood]);
-  }
-
-  function handleConsumeFood(
-    id: string, 
-    qty: number
-  ) 
-  {
-    consumeFood(id, qty);
   }
 
   useEffect(() => {
@@ -105,15 +97,13 @@ export default function App() {
         {foods.length === 0 ? (
             <p>Add your first food to get started.</p>
           ) : (
-            <>
-              <FoodList
-                foods={foods}
-                onConsume={handleConsumeFood}
-                snackbar={snackbar}
-                onUndo={undo}
-                onConfirm={confirm}
-              />
-            </>
+            <FoodList
+              foods={foods}
+              onConsume={consumeFood}
+              onUndo={undo}
+              onConfirm={confirm}
+              undoAction={undoAction}
+            />
           )}
       </main>
       <footer>

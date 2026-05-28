@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { 
+  useRef, 
+  useState 
+} from 'react';
 
 import type {
   Food,
@@ -13,8 +16,7 @@ export function useFoodActions(
   const [undoAction, setUndoAction] =
     useState<UndoAction | null>(null);
 
-  const [snackbar, setSnackbar] =
-    useState<string | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   const consumeFood = (
       id: string,
@@ -30,11 +32,8 @@ export function useFoodActions(
       qty
     });
 
-    setSnackbar(`${food.name} consumed`);
-
-    setTimeout(() => {
-      setUndoAction(null);
-      setSnackbar(null);
+    timeoutRef.current = window.setTimeout(() => {
+      confirm();
     }, 5000
     );
   };
@@ -42,37 +41,38 @@ export function useFoodActions(
   const undo = () => {
     if (!undoAction) return;
 
+    if(timeoutRef.current)
+      clearTimeout(timeoutRef.current);
+
     setUndoAction(null);
-    setSnackbar(null);
   }
 
   const confirm = () => {
-     if (!undoAction) return;
+    if (!undoAction) return;
 
-  setFoods(prev =>
-    prev
-      .map(f =>
-        f.id === undoAction.foodId
-          ? {
-              ...f,
-              quantity: Math.max(
-                0,
-                f.quantity - undoAction.qty
-              ),
-            }
-          : f
-      )
-      .filter(f => f.quantity > 0)
-  );
+    setFoods(prev =>
+      prev
+        .map(f =>
+          f.id === undoAction.foodId
+            ? {
+                ...f,
+                quantity: Math.max(
+                  0,
+                  f.quantity - undoAction.qty
+                ),
+              }
+            : f
+        )
+        .filter(f => f.quantity > 0)
+    );
 
     setUndoAction(null);
-    setSnackbar(null);
   }
 
   return {
     consumeFood,
     undo,
     confirm,
-    snackbar
+    undoAction
   };
 }
