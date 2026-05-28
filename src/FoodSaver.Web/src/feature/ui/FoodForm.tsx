@@ -39,11 +39,12 @@ export function FoodForm({ onCreate }: Props) {
   
   return (
     <>
-      <div className="error-container">
-        <p className="error-text">
-          {error ?? "\u00A0"}
-        </p>
-      </div>
+      <p 
+        className="error-text"
+        aria-live='assertive'
+      >
+        {error || ''}
+      </p>
     
       <form
         onSubmit={(e) => {

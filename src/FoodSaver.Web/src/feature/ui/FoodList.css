@@ -8,6 +8,8 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 
   padding: 1rem;
   margin-bottom: 0.75rem;
@@ -22,6 +24,17 @@ li span {
   flex-direction: column;
   gap: 0.25rem;
   color: var(--text-li)
+}
+
+li .actions {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+li .undo {
+  background-color: red;
+  color: white;
 }
 
 li .soon-badge {
