@@ -15,16 +15,12 @@ export function Snackbar({
         <div>
             <button
                 onClick={onUndo}
-                aria-label='Undo last action'
                 className='cancel'
             >
                 {message} - Undo
             </button>
 
-            <button
-                onClick={onConfirm}
-                aria-label='Close undo button'
-            >
+            <button onClick={onConfirm}>
                 Confirm
             </button>
         </div>

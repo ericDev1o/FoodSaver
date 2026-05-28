@@ -75,10 +75,7 @@ export function FoodList({
             expiryDate < tomorrow;
 
           return (
-            <li 
-              key={food.id}
-              aria-label={`${food.name}, quantity ${food.quantity}`}
-            >
+            <li key={food.id}>
               <span>
                 {food.name} x{food.quantity}
                 {isExpired ? ' expired ' : ' expires '} 
@@ -97,25 +94,14 @@ export function FoodList({
 
               {food.quantity > 0 && (
               <>
-                <button
-                  onClick={() => {onConsume(food.id, 1)}}
-                  aria-label={`
-                    Consume ${food.quantity === 1 
-                      ? food.name :
-                      `1 ${food.name}`
-                    }
-                  `}
-                >
+                <button onClick={() => {onConsume(food.id, 1)}}>
                   {food.quantity === 1
                   ? 'Consume'
                   : 'Consume 1'}
                 </button>
 
                 {food.quantity > 1 && (
-                  <button
-                    onClick={() => {onConsume(food.id, food.quantity)}}
-                    aria-label={`Consume all ${food.name}`}
-                  >
+                  <button onClick={() => {onConsume(food.id, food.quantity)}}>
                     Consume all
                   </button>
                 )}
