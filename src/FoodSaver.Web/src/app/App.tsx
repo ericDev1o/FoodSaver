@@ -64,10 +64,7 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  if(isLoading)
-    return <p>Loading foods...</p>
-
-  if(error)
+   if(error)
     return (
     <p
       className='error-text'
@@ -92,19 +89,32 @@ export default function App() {
         </button>
       </header>
       <main>
-        <FoodForm onCreate={handleCreateFood} />
+        {isLoading ? (
+          <p>Loading foods...</p>
+        ) : error ? (
+          <p
+            className='error-text'
+            aria-live='assertive'
+          >
+            {error}
+          </p>
+        ) : (
+          <>
+            <FoodForm onCreate={handleCreateFood} />
 
-        {foods.length === 0 ? (
-            <p>Add your first food to get started.</p>
-          ) : (
-            <FoodList
-              foods={foods}
-              onConsume={consumeFood}
-              onUndo={undo}
-              onConfirm={confirm}
-              undoAction={undoAction}
-            />
-          )}
+            {foods.length === 0 ? (
+                <p>Add your first food to get started.</p>
+              ) : (
+                <FoodList
+                  foods={foods}
+                  onConsume={consumeFood}
+                  onUndo={undo}
+                  onConfirm={confirm}
+                  undoAction={undoAction}
+                />
+              )}
+          </>
+        )}
       </main>
       <footer>
         <p>2026 FoodSaver · BSD-2 licensed</p>
