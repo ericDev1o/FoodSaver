@@ -8,23 +8,22 @@ Console.WriteLine("FoodSaver import tool");
 if (args.Length != 1)
 {
     Console.WriteLine("Usage: ./tools/FoodSaver.Import.cs <file-path>");
-    Environment.Exit(-1);
+    Environment.Exit(1);
 }
 
 string filePath = args[0];
-
 Console.WriteLine($"Importing {filePath}...");
 
 /**
- * feat(import): validate input file existence
+ * 1 - Validate input file existence
  */
-/*if(File.Exists(filePath)){
-    // Importing foods.csv... 
+if(File.Exists(filePath)){
+    Console.WriteLine($"Found file: {filePath}");
 } else {
-    // Input file not found: missing.csv
-    // Usage: FoodSaver.Import <file-path>
-    // exit(-1)
-}*/
+    Console.WriteLine($"Error: Input file not found: {filePath}");
+    Console.WriteLine("Usage: ./tools/FoodSaver.Import.cs <file-path>");
+    Environment.Exit(1);
+}
 
 /**
  * feat(import): add csv parsing
