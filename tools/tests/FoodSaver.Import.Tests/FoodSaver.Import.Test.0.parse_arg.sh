@@ -17,14 +17,16 @@ if echo "$output" | grep -q "Importing foods.csv..."; then
    passed "1 arg test:
 
       FoodSaver.Import.cs foods.csv ok
-
-      Output contains Importing foods.csv"
+      Expected output contains Importing ,
+      
+      got $output"
 else
    failed "1 arg test: 
 
       FoodSaver.Import.cs foods.csv ko
+      Expected output contains Importing,
     
-      Output: $output"
+      got $output"
 fi
 
 echo "
@@ -37,14 +39,14 @@ if [ "$exit_code" -eq 1 ] \
    passed "too many args test: 
 
       FoodSaver.Import.cs foods.csv extra.csv ok
-      expected exit_code=1, got $exit_code
+      Expected exit_code=1, got $exit_code
 
       Output contains Usage: ./tools/FoodSaver.Import.cs <file-path>"
 else
    failed "too many args test: 
 
       FoodSaver.Import.cs foods.csv extra.csv ko
-      expected exit_code=1, got $exit_code
+      Expected exit_code=1, got $exit_code
     
       Output: $output"
 fi
@@ -59,14 +61,14 @@ if [ "$exit_code" -eq 1 ] \
    passed "no arg test: 
    
       FoodSaver.Import.cs ok
-      expected exit_code=1, got $exit_code
+      Expected exit_code=1, got $exit_code
 
       Output contains Usage: ./tools/FoodSaver.Import.cs <file-path>"
 else
    failed "no arg test: 
    
       FoodSaver.Import.cs ko
-      expected exit_code=1, got $exit_code
+      Expected exit_code=1, got $exit_code
     
       Output: $output"
 fi

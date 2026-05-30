@@ -1,4 +1,4 @@
-#!/usr/bin/dotnet run
+#!/usr/bin/env -S dotnet run
 
 Console.WriteLine("FoodSaver import tool");
 
@@ -26,21 +26,49 @@ if(File.Exists(filePath)){
 }
 
 /**
- * feat(import): add csv parsing
- * implementation:
- *  open file
- *  skip header
- *  parse lines
- *  build temorary DTO
- * fixture: foods.valid.csv 
+ * 2 - Parse file
  */
-/*
-record FoodImport(
-    string Name,
-    int Quantity,
-    DateOnly ExpiryDate);
-    */
-// Parsed 2 food items
+try
+{
+    List<(
+        string Name,
+        int Quantity,
+        DateOnly ExpiryDate
+    )> foods = 
+    [
+        .. File
+        .ReadLines(filePath)
+        .Skip(1)
+        .Select(line =>
+        {
+            string[] columns = line.Split(',');
+
+            if(columns.Length != 3)
+                throw new FormatException("A food must have 3 informations: name, quantity and expiry date.");
+
+            if(! int.TryParse(columns[1], out int quantity))
+                throw new FormatException("Quantity must be a valid integer.");
+
+            if(! DateOnly.TryParse(columns[2], out DateOnly expiryDate))
+                throw new FormatException("ExpiryDate must be a valid date.");
+
+            return (
+                Name: columns[0],
+                Quantity: quantity,
+                ExpiryDate: expiryDate
+            );
+        })
+    ];
+   
+    string suffix = foods.Count == 1 ? string.Empty : "s";
+    Console.WriteLine($"Parsed file: {filePath}");
+    Console.WriteLine($"Parsed {foods.Count} food item{suffix}");
+} catch (Exception ex)
+{
+    Console.WriteLine("Parse error: invalid file");
+    Console.WriteLine(ex.Message);
+    Environment.Exit(1);
+}
 
 /**
  * feat(import): validate imported food data

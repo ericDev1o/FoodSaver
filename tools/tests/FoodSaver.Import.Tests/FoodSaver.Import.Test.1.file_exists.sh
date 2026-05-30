@@ -15,16 +15,16 @@ if [ "$exit_code" -eq 0 ] \
    passed "file exists test:
 
       FoodSaver.Import.cs foods.csv ok
-      expected exit_code=0, got $exit_code
+      Expected output contains Found file,
 
-      Output contains Found file"
+      got $output"
 else
    failed "file exists test: 
 
       FoodSaver.Import.cs foods.csv ko
-      expected exit_code=0, got $exit_code
+      Expected output contains Found file,
     
-      Output: $output"
+      got $output"
 fi
 
 echo "
@@ -36,14 +36,14 @@ if [ "$exit_code" -eq 1 ] \
    passed "no file test: 
 
       FoodSaver.Import.cs missing.csv ok
-      expected exit_code=1, got $exit_code
+      Expected exit_code=1, got $exit_code
 
       Output contains Input file not found"
 else
    failed "no file test: 
 
       FoodSaver.Import.cs missing.csv ko
-      expected exit_code=1, got $exit_code
+      Expected exit_code=1, got $exit_code
     
       Output: $output"
 fi
