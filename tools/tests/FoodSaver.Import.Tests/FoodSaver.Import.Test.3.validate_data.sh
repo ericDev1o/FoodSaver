@@ -15,16 +15,16 @@ if [ "$exit_code" -eq 0 ] \
    passed "validate data test:
 
       FoodSaver.Import.cs foods.valid.csv ok
-      Expected exit_code=0, got $exit_code
+      Expected output contains Data is valid,
 
-      Output contains Data is valid"
+      got $output"
 else
    failed "validate data test: 
 
       FoodSaver.Import.cs foods.valid.csv ko
-      Expected exit_code=0, got $exit_code
+      Expected output contains Data is valid,
     
-      Output: $output"
+      got Output: $output"
 fi
 
 echo "

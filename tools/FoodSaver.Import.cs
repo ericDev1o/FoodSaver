@@ -3,15 +3,24 @@
 Console.WriteLine("FoodSaver import tool");
 
 /**
- * 0 - Parse arg
+ * 0 - Parse args
  */
-if (args.Length != 1)
+bool dryRun = args.Contains("--dry-run");
+
+string[] positionalArgs =
+[
+    .. args.Where(arg => arg != "--dry-run")
+];
+
+if (positionalArgs.Length != 1)
 {
-    Console.WriteLine("Usage: ./tools/FoodSaver.Import.cs <file-path>");
+    Console.WriteLine(
+        "Usage: ./tools/FoodSaver.Import.cs <file-path> [--dry-run]");
     Environment.Exit(1);
 }
 
-string filePath = args[0];
+string filePath = positionalArgs[0];
+
 Console.WriteLine($"Importing {filePath}...");
 
 /**
@@ -103,21 +112,20 @@ else
 }
 
 /**
- * feat(import): add --dry-run mode
- * behavior:
- *  parse
- *  validate
- *  display what would've been created
- * no POST
+ * 4 Dry run
  */
- /*
- Dry run enabled
+if (dryRun)
+{
+    Console.WriteLine("Dry run: no data imported");
 
-✔ Milk (2) -> 2026-06-01
-✔ Eggs (12) -> 2026-06-05
+    foreach (var (Name, RawQuantity, RawExpiryDate, LineNumber) in foods)
+    {
+        Console.WriteLine(
+            $"Would import: {Name} x{RawQuantity} ({RawExpiryDate})");
+    }
 
-2 items ready for import
-*/
+    Environment.Exit(0);
+}
 
 /**
  * feat(import): add api food import integration
