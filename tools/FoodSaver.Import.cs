@@ -17,9 +17,9 @@ Console.WriteLine($"Importing {filePath}...");
 /**
  * 1 - Validate input file existence
  */
-if(File.Exists(filePath)){
+if(File.Exists(filePath))
     Console.WriteLine($"Found file: {filePath}");
-} else {
+else {
     Console.WriteLine($"Error: Input file not found: {filePath}");
     Console.WriteLine("Usage: ./tools/FoodSaver.Import.cs <file-path>");
     Environment.Exit(1);
@@ -28,34 +28,33 @@ if(File.Exists(filePath)){
 /**
  * 2 - Parse file
  */
+List<(
+    string Name,
+    string RawQuantity,
+    string RawExpiryDate,
+    int LineNumber
+)> foods = [];
 try
 {
-    List<(
-        string Name,
-        int Quantity,
-        DateOnly ExpiryDate
-    )> foods = 
+    foods = 
     [
         .. File
         .ReadLines(filePath)
         .Skip(1)
-        .Select(line =>
+        .Select((line, index) =>
         {
             string[] columns = line.Split(',');
 
             if(columns.Length != 3)
                 throw new FormatException("A food must have 3 informations: name, quantity and expiry date.");
 
-            if(! int.TryParse(columns[1], out int quantity))
-                throw new FormatException("Quantity must be a valid integer.");
-
-            if(! DateOnly.TryParse(columns[2], out DateOnly expiryDate))
-                throw new FormatException("ExpiryDate must be a valid date.");
+            int lineNumber = index + 2; // +1 header +1 index base 0
 
             return (
-                Name: columns[0],
-                Quantity: quantity,
-                ExpiryDate: expiryDate
+                Name: columns[0].Trim(),
+                Quantity: columns[1].Trim(),
+                RawExpiryDate: columns[2].Trim(),
+                LineNumber: index + 2
             );
         })
     ];
@@ -71,19 +70,37 @@ try
 }
 
 /**
- * feat(import): validate imported food data
- * rules:
- *  name required
- *  quantity > 0
- *  expiryDate valide
- * fixture: foods.invalid.csv
+ * 3 - Validate imported food data
  */
-// 3 invalid rows detected
-/* 
-Line 2: quantity must be positive
-Line 3: name is required
-Line 4: invalid expiry date
-*/
+List<string> errors = [];
+
+foreach (var (Name, RawQuantity, RawExpiryDate, LineNumber) in foods)
+{
+    if(string.IsNullOrWhiteSpace(Name))
+        errors.Add($"Line {LineNumber}: name is required");
+
+    if(! int.TryParse(RawQuantity, out int quantity))
+        errors.Add($"Line {LineNumber}: Quantity must be a valid integer.");
+    else if(quantity <= 0)
+        errors.Add($"Line {LineNumber}: quantity must be positive");
+
+    if(! DateOnly.TryParse(RawExpiryDate, out DateOnly expiryDate))
+        errors.Add($"Line {LineNumber}: expiryDate must be a valid date.");
+    else if(expiryDate <= DateOnly.FromDateTime(DateTime.Today))
+        errors.Add($"Line {LineNumber}: expiry date must'nt be in the past");
+}
+
+if(errors.Count == 0)
+    Console.WriteLine("Data is valid");
+else
+{
+    Console.WriteLine($"{errors.Count} invalid rows detected");
+
+    foreach (string error in errors)
+        Console.WriteLine(error);
+
+    Environment.Exit(1);
+}
 
 /**
  * feat(import): add --dry-run mode

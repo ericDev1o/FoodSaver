@@ -15,21 +15,21 @@ if [ "$exit_code" -eq 0 ] \
    passed "parse valid file test:
 
       FoodSaver.Import.cs foods.valid.csv ok
-      Expected exit_code=0, got $exit_code
+      Expected output contains Parsed file,
 
-      Output contains Parsed file"
+      got $output"
 else
    failed "parse valid file test: 
 
       FoodSaver.Import.cs foods.valid.csv ko
-      Expected exit_code=0, got $exit_code
+      Expected output contains Parsed file,
     
-      Output: $output"
+      got $output"
 fi
 
 echo "
 ***** 2 - 2/2 - must fail - invalid file parse error *****"
-output=$(./tools/FoodSaver.Import.cs ./tools/tests/FoodSaver.Import.Tests/fixtures/foods.invalid.csv 2>&1)
+output=$(./tools/FoodSaver.Import.cs ./tools/tests/FoodSaver.Import.Tests/fixtures/foods.parse.invalid.csv 2>&1)
 exit_code=$?
 if [ "$exit_code" -eq 1 ] \
    && echo "$output" | grep -q "Parse error: invalid file"; then
