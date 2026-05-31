@@ -17,3 +17,9 @@
 - Cypress
 - axe-core
 - React Native
+
+## Tooling
+
+- .NET 10 File-Based App (bulk import tool)
+- Bash (smoke and integration tests)
+- CSV (import format)
