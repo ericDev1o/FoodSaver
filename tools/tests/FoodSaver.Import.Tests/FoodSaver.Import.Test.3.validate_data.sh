@@ -9,19 +9,19 @@ echo "
 ***** 3 - 1/3 - must pass - valid data *****"
 output=$(./tools/FoodSaver.Import.cs ./tools/tests/FoodSaver.Import.Tests/fixtures/foods.valid.csv 2>&1)
 
-if echo "$output" | grep -q "Data is valid"; then
+if echo "$output" | grep -q "Data is 100% valid"; then
    
    passed "validate data test:
 
       FoodSaver.Import.cs foods.valid.csv ok
-      Expected output contains Data is valid,
+      Expected output contains Data is 100% valid,
 
       got $output"
 else
    failed "validate data test: 
 
       FoodSaver.Import.cs foods.valid.csv ko
-      Expected output contains Data is valid,
+      Expected output contains Data is 100% valid,
     
       got Output: $output"
 fi

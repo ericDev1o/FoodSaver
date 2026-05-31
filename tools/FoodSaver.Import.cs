@@ -120,7 +120,7 @@ try
  */
 List<string> errors = [];
 
-HashSet<int> invalidLineNumbers = [];
+List<FoodCreateRequest> validFoods = [];
 
 foreach (var (Name, RawExpiryDate, RawQuantity, LineNumber) in foods)
 {
@@ -154,14 +154,17 @@ foreach (var (Name, RawExpiryDate, RawQuantity, LineNumber) in foods)
         isValid = false;
     }
 
-    if(! isValid)
-        invalidLineNumbers.Add(LineNumber);
+    if(isValid) {
+        validFoods.Add(
+            new FoodCreateRequest(
+                Name,
+                expiryDate,
+                quantity));
+    }
 }
 
-int validRowsCount = foods.Count - invalidLineNumbers.Count;
-
 if(errors.Count == 0)
-    Console.WriteLine("Data is valid");
+    Console.WriteLine("Data is 100% valid");
 else
 {
     string suffix = errors.Count == 1 ? string.Empty : "s";
@@ -171,7 +174,7 @@ else
         Console.WriteLine(error);
 }
 
-if (validRowsCount == 0)
+if (validFoods.Count == 0)
 {
     Console.WriteLine(
         "No valid row to import.");
@@ -207,51 +210,26 @@ using HttpClient httpClient = new()
 
 int imported = 0;
 int failed = 0;
-int skipped = 0;
 
-foreach (var (Name, RawExpiryDate, RawQuantity, LineNumber) in foods)
+foreach (FoodCreateRequest request in validFoods)
 {
-    if (invalidLineNumbers.Contains(LineNumber)) {
-        skipped++;
+    HttpResponseMessage response =
+        await httpClient.PostAsJsonAsync(
+            "/foods", 
+            request,
+            FoodSaverJsonContext.Default.FoodCreateRequest);
 
-        continue;
-    }
-
-    bool isParsedExpiryDate = DateOnly.TryParse(RawExpiryDate, out DateOnly expiryDate);
-
-    bool isParsedQuantity = int.TryParse(RawQuantity, out int quantity);
-
-    if (! isParsedQuantity || ! isParsedExpiryDate)
+    if (response.IsSuccessStatusCode)
     {
-        skipped++;
-        continue;
+        Console.WriteLine($"✔ {request.Name} x{request.Quantity} imported");
+        imported++;
     }
-    else {
-        FoodCreateRequest request = new
-        (
-            Name,
-            expiryDate,
-            quantity
-        );
+    else
+    {
+        Console.WriteLine(
+            $"✖ {request.Name} x{request.Quantity} failed: {(int)response.StatusCode}");
 
-        HttpResponseMessage response =
-            await httpClient.PostAsJsonAsync(
-                "/foods", 
-                request,
-                FoodSaverJsonContext.Default.FoodCreateRequest);
-
-        if (response.IsSuccessStatusCode)
-        {
-            Console.WriteLine($"✔ {Name} x{RawQuantity} imported");
-            imported++;
-        }
-        else
-        {
-            Console.WriteLine(
-                $"✖ {Name} x{RawQuantity} failed: {(int)response.StatusCode}");
-
-            failed++;
-        }
+        failed++;
     }
 }
 
@@ -259,7 +237,7 @@ Console.WriteLine();
 Console.WriteLine("Summary");
 Console.WriteLine("-------");
 Console.WriteLine($"Imported: {imported}");
-Console.WriteLine($"Skipped: {skipped}");
+Console.WriteLine($"Skipped: {foods.Count - validFoods.Count}");
 Console.WriteLine($"Failed: {failed}");
 
 static void LoadDotEnv(string path)
