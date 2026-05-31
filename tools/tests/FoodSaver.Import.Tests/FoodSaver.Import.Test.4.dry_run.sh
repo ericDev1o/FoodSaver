@@ -18,9 +18,8 @@ if [ "$exit_code" -eq 0 ] \
    passed "dry run test:
 
       FoodSaver.Import.cs foods.valid.csv --dry-run ok
-      Expected exit_code=0, got $exit_code
+      Expected output contains dry run preview and Would import,
 
-      Output contains dry run preview and Would import,
       got $output"
 else
 
