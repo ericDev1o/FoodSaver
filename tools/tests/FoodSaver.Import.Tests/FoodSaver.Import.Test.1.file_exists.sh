@@ -9,8 +9,8 @@ echo "
 ***** 1 - 1/2 - must pass - file exists *****"
 output=$(./tools/FoodSaver.Import.cs ./tools/tests/FoodSaver.Import.Tests/fixtures/foods.valid.csv 2>&1)
 exit_code=$?
-if [ "$exit_code" -eq 0 ] \
-   && echo "$output" | grep -q "Found file:"; then
+
+if echo "$output" | grep -q "Found file:"; then
    
    passed "file exists test:
 

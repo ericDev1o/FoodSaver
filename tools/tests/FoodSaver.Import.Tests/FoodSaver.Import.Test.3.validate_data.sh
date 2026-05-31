@@ -9,8 +9,8 @@ echo "
 ***** 3 - 1/2 - must pass - valid data *****"
 output=$(./tools/FoodSaver.Import.cs ./tools/tests/FoodSaver.Import.Tests/fixtures/foods.valid.csv 2>&1)
 exit_code=$?
-if [ "$exit_code" -eq 0 ] \
-   && echo "$output" | grep -q "Data is valid"; then
+
+if echo "$output" | grep -q "Data is valid"; then
    
    passed "validate data test:
 

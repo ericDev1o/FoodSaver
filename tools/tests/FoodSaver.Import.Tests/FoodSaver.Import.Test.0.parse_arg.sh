@@ -12,6 +12,7 @@ echo "
 ***** 0 - 1/3 - must pass - exactly 1 argument *****"
 output=$(./tools/FoodSaver.Import.cs foods.csv 2>&1)
 exit_code=$?
+
 if echo "$output" | grep -q "Importing foods.csv..."; then
    
    passed "1 arg test:

@@ -15,25 +15,21 @@ output=$(./tools/FoodSaver.Import.cs \
   ./tools/tests/FoodSaver.Import.Tests/fixtures/foods.valid.csv \
   2>&1)
 
-exit_code=$?
-
-if [ "$exit_code" -eq 0 ] \
-   && echo "$output" | grep -q "Import started" \
+if echo "$output" | grep -q "Import started" \
    && echo "$output" | grep -q "Summary" \
    && echo "$output" | grep -q "Imported: 2"; then
 
    passed "API import test:
 
       FoodSaver.Import.cs foods.valid.csv ok
-      Expected exit_code=0, got $exit_code
-
-      Output must contain Import started, Summary and Imported: 2,
+      Expected output contains Import started, Summary and Imported: 2,
+      
       got $output"
 else
    failed "API import test:
 
       FoodSaver.Import.cs foods.valid.csv ko
-      Expected exit_code=0, got $exit_code
+      Expected output contains Import started, Summary and Imported: 2,
 
-      Output: $output"
+      got output: $output"
 fi

@@ -9,10 +9,6 @@ LoadDotEnv(
         ? "./tools/.env.production"
         : "./tools/.env");
 
-string baseUrl =
-    Environment.GetEnvironmentVariable("FOODSAVER_API_URL")
-    ?? "http://localhost:8080";
-
 Console.WriteLine();
 Console.WriteLine();
 Console.WriteLine("FoodSaver import tool");
@@ -22,17 +18,42 @@ Console.WriteLine();
  */
 bool dryRun = args.Contains("--dry-run");
 
+string? baseUrlArg = null;
+
+for (int i = 0; i < args.Length; i++)
+{
+    if (
+        args[i] == "--base-url"
+        && i + 1 < args.Length)
+    {
+        baseUrlArg = args[i + 1];
+    }
+}
+
 string[] positionalArgs =
 [
-    .. args.Where(arg => arg != "--dry-run")
+    .. args.Where(arg => 
+        arg != "--dry-run"
+        && arg != "--base-url"
+        && arg != baseUrlArg)
 ];
 
 if (positionalArgs.Length != 1)
 {
     Console.WriteLine(
-        "Usage: ./tools/FoodSaver.Import.cs <file-path> [--dry-run]");
+        "Usage: ./tools/FoodSaver.Import.cs <file-path> [--dry-run] [--base-url <url>]");
     Environment.Exit(1);
 }
+
+/**
+ * 6 - Configurable API base URL
+ */
+string baseUrl =
+    baseUrlArg
+    ?? Environment.GetEnvironmentVariable("FOODSAVER_API_URL")
+    ?? "http://localhost:8080";
+Console.WriteLine($"baseUrl: {baseUrl}");
+
 
 string filePath = positionalArgs[0];
 
