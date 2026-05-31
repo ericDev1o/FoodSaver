@@ -268,20 +268,3 @@ record FoodCreateRequest(
 
 [JsonSerializable(typeof(FoodCreateRequest))]
 internal partial class FoodSaverJsonContext : JsonSerializerContext{}
-
-/**
- * docs(import): add usage examples for file-based import tool
- * README ou /docs/import.md
- * # Run
-
- * ./tools/FoodSaver.Import.cs foods.csv
- 
- * # Dry run
-
- * ./tools/FoodSaver.Import.cs foods.csv --dry-run 
-
- * # Custom API
-
- * ./tools/FoodSaver.Import.cs foods.csv \
- *  --base-url http://localhost:5050
- */

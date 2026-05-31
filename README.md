@@ -8,6 +8,7 @@ Track food expiry dates and reduce household waste.
 - Consume one quantity or all remaining quantities
 - Highlight food expiring today
 - Highlight food expiring soon
+- Import foods from a CSV file into FoodSaver
 
 ## Tech stack
 
@@ -24,6 +25,10 @@ Track food expiry dates and reduce household waste.
 - TypeScript
 - Vite
 - ESLint
+
+### Tooling
+- .NET 10 File-Based App (FoodSaver.Import.cs)
+- Bash
 
 ### Testing
 
@@ -49,6 +54,37 @@ yarn install
 yarn lint
 yarn build
 yarn dev
+```
+
+### Import tool
+
+#### Run
+
+```bash
+./tools/FoodSaver.Import.cs foods.csv
+```
+
+#### Dry run
+
+Preview imported foods without importing them.
+
+```bash
+./tools/FoodSaver.Import.cs foods.csv --dry-run
+```
+
+#### Custom API URL
+
+Use a custom FoodSaver API URL.
+
+```bash
+./tools/FoodSaver.Import.cs foods.csv \
+  --base-url http://localhost:5050
+```
+
+#### Tests
+
+```bash
+./tools/tests/FoodSaver.Import.Tests/run.sh
 ```
 
 ## Deploy
@@ -77,14 +113,30 @@ FoodSaver follows a feature-based vertical slice architecture.
 
 ## Environment
 
-### .env
+### src/FoodSaver.Web/
+
+#### .env
 
 ```code
 VITE_API_URL=http://localhost:8080
 ```
 
-### .env.production
+#### .env.production
 
 ```code
 VITE_API_URL=https://foodsaver-api-00tb.onrender.com
+```
+
+### tools/
+
+#### .env
+
+```code
+FOODSAVER_API_URL=http://localhost:8080
+```
+
+#### .env.production
+
+```code
+FOODSAVER_API_URL=https://foodsaver-api-00tb.onrender.com
 ```
