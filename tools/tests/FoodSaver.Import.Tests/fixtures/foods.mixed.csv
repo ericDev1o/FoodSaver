@@ -1,0 +1,5 @@
+name,expiryDate,quantity
+Milk,2026-06-30,a
+Milk,2026-06-30,-2
+Eggs,invalid,12
+Cheese,2026-07-01,4

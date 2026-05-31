@@ -120,30 +120,61 @@ try
  */
 List<string> errors = [];
 
+HashSet<int> invalidLineNumbers = [];
+
 foreach (var (Name, RawExpiryDate, RawQuantity, LineNumber) in foods)
 {
-    if(string.IsNullOrWhiteSpace(Name))
-        errors.Add($"Line {LineNumber}: name is required");
+    bool isValid = true;
 
-    if(! DateOnly.TryParse(RawExpiryDate, out DateOnly expiryDate))
-        errors.Add($"Line {LineNumber}: expiryDate must be a valid date.");
-    else if(expiryDate <= DateOnly.FromDateTime(DateTime.Today))
-        errors.Add($"Line {LineNumber}: expiry date must'nt be in the past");
+    if(string.IsNullOrWhiteSpace(Name)) {
+        errors.Add($"✖ Line {LineNumber}: name is required");
 
-    if(! int.TryParse(RawQuantity, out int quantity))
-        errors.Add($"Line {LineNumber}: Quantity must be a valid integer.");
-    else if(quantity <= 0)
-        errors.Add($"Line {LineNumber}: quantity must be positive");
+        isValid = false;
+    }
+
+    if(! DateOnly.TryParse(RawExpiryDate, out DateOnly expiryDate)){
+        errors.Add($"✖ Line {LineNumber}: expiryDate must be a valid date.");
+
+        isValid = false;
+    }
+    else if(expiryDate <= DateOnly.FromDateTime(DateTime.Today)) {
+        errors.Add($"✖ Line {LineNumber}: expiry date must'nt be in the past.");
+
+        isValid = false;
+    }
+
+    if(! int.TryParse(RawQuantity, out int quantity)) {
+        errors.Add($"✖ Line {LineNumber}: quantity must be a valid integer.");
+
+        isValid = false;
+    }
+    else if(quantity <= 0) {
+        errors.Add($"✖ Line {LineNumber}: quantity must be positive.");
+
+        isValid = false;
+    }
+
+    if(! isValid)
+        invalidLineNumbers.Add(LineNumber);
 }
+
+int validRowsCount = foods.Count - invalidLineNumbers.Count;
 
 if(errors.Count == 0)
     Console.WriteLine("Data is valid");
 else
 {
-    Console.WriteLine($"{errors.Count} invalid rows detected");
+    string suffix = errors.Count == 1 ? string.Empty : "s";
+    Console.WriteLine($"{errors.Count} data validation error{suffix} detected");
 
     foreach (string error in errors)
         Console.WriteLine(error);
+}
+
+if (validRowsCount == 0)
+{
+    Console.WriteLine(
+        "No valid row to import.");
 
     Environment.Exit(1);
 }
@@ -176,17 +207,26 @@ using HttpClient httpClient = new()
 
 int imported = 0;
 int failed = 0;
+int skipped = 0;
 
 foreach (var (Name, RawExpiryDate, RawQuantity, LineNumber) in foods)
 {
+    if (invalidLineNumbers.Contains(LineNumber)) {
+        skipped++;
+
+        continue;
+    }
+
     bool isParsedExpiryDate = DateOnly.TryParse(RawExpiryDate, out DateOnly expiryDate);
 
     bool isParsedQuantity = int.TryParse(RawQuantity, out int quantity);
 
-    if(
-        isParsedExpiryDate && 
-        isParsedQuantity
-    ) {
+    if (! isParsedQuantity || ! isParsedExpiryDate)
+    {
+        skipped++;
+        continue;
+    }
+    else {
         FoodCreateRequest request = new
         (
             Name,
@@ -202,13 +242,13 @@ foreach (var (Name, RawExpiryDate, RawQuantity, LineNumber) in foods)
 
         if (response.IsSuccessStatusCode)
         {
-            Console.WriteLine($"✔ {Name} x{RawQuantity} ({RawExpiryDate}) imported");
+            Console.WriteLine($"✔ {Name} x{RawQuantity} imported");
             imported++;
         }
         else
         {
             Console.WriteLine(
-                $"✖ {Name} x{RawQuantity} ({RawExpiryDate}) failed: {(int)response.StatusCode}");
+                $"✖ {Name} x{RawQuantity} failed: {(int)response.StatusCode}");
 
             failed++;
         }
@@ -219,7 +259,7 @@ Console.WriteLine();
 Console.WriteLine("Summary");
 Console.WriteLine("-------");
 Console.WriteLine($"Imported: {imported}");
-Console.WriteLine($"Skipped: {foods.Count - imported - failed}");
+Console.WriteLine($"Skipped: {skipped}");
 Console.WriteLine($"Failed: {failed}");
 
 static void LoadDotEnv(string path)
@@ -250,24 +290,6 @@ record FoodCreateRequest(
 
 [JsonSerializable(typeof(FoodCreateRequest))]
 internal partial class FoodSaverJsonContext : JsonSerializerContext{}
-
-/**
- * feat(import): add configurable api base url
- */
-// Usage: ./tools/FoodSaver.Import.cs foods.csv \
-// --base-url https://foodsaver-api.onrender.com // http://localhost:5050
-// FOODSAVER_API_URL=http://localhost:5050 ./tools/FoodSaver.Import.cs foods.csv
-
-/**
- * chore(import): improve import logging and summary output
- */
-/*
-Import started
-
-✔ Milk imported
-✔ Eggs imported
-✖ Cheese skipped: invalid expiry date
-*/
 
 /**
  * docs(import): add usage examples for file-based import tool

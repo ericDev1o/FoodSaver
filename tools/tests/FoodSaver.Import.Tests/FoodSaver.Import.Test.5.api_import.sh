@@ -16,20 +16,22 @@ output=$(./tools/FoodSaver.Import.cs \
   2>&1)
 
 if echo "$output" | grep -q "Import started" \
+   && echo "$output" | grep -q "✔ Milk x2 imported" \
+   && echo "$output" | grep -q "✔ Eggs x12 imported" \
    && echo "$output" | grep -q "Summary" \
    && echo "$output" | grep -q "Imported: 2"; then
 
    passed "API import test:
 
       FoodSaver.Import.cs foods.valid.csv ok
-      Expected output contains Import started, Summary and Imported: 2,
+      Expected output contains Import started, ✔ Milk imported, ✔ Eggs imported, Summary and Imported: 2,
       
       got $output"
 else
    failed "API import test:
 
       FoodSaver.Import.cs foods.valid.csv ko
-      Expected output contains Import started, Summary and Imported: 2,
+      Expected output contains Import started, ✔ Milk x2 imported, ✔ Eggs x12 imported, Summary and Imported: 2,
 
       got output: $output"
 fi
