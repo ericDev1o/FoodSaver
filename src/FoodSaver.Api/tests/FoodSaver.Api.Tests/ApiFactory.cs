@@ -19,7 +19,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await _connection.OpenAsync();
 
         using IServiceScope scope = Services.CreateScope();
-        using AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        using FoodDbContext db = scope.ServiceProvider.GetRequiredService<FoodDbContext>();
 
         await db.Database.EnsureCreatedAsync();
     }
@@ -34,9 +34,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.ConfigureServices(services =>
         {
-            services.RemoveAll<DbContextOptions<AppDbContext>>();
+            services.RemoveAll<DbContextOptions<FoodDbContext>>();
 
-            services.AddDbContext<AppDbContext>(options =>
+            services.AddDbContext<FoodDbContext>(options =>
             {
                 options.UseSqlite(_connection);
             });

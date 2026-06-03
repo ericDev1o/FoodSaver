@@ -13,7 +13,7 @@ public static class ConsumeFoodEndpoint
         app.MapPatch("/foods/{id:guid}/consume", static async (
             Guid id,
             ConsumeFoodRequest req,
-            AppDbContext db,
+            FoodDbContext db,
             CancellationToken ct) =>
         {
             FoodItem? food = await db.FoodItems

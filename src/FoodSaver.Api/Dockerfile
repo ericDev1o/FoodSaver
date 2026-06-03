@@ -5,9 +5,6 @@ COPY *.csproj ./
 RUN dotnet restore
 
 COPY . .
-RUN dotnet publish -c Release -o /app/publish --no-restore
-
-COPY . .
 RUN dotnet publish FoodSaver.Api.csproj -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0

@@ -10,7 +10,7 @@ public static class GetFoodsEndpoint
     public static IEndpointRouteBuilder MapGetFoodsEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet("/foods", async (
-            AppDbContext db, 
+            FoodDbContext db, 
             CancellationToken ct) =>
         {
             List<FoodItem> foods = await db.FoodItems

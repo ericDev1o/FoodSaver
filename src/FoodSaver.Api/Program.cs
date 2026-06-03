@@ -20,9 +20,14 @@ string[] origins = builder.Configuration
     ("CORS origins configuration is missing.");
 
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<AppDbContext>(options =>
+
+string? connectionString = builder.Configuration.GetConnectionString("FoodSaver");
+if(string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException(
+        "Connection string 'FoodSaver' not found.");
+builder.Services.AddDbContext<FoodDbContext>(options =>
 {
-    options.UseSqlite("Data Source=foodsaver.db");
+    options.UseSqlServer(connectionString);
 });
 
 builder.Services.AddCors(options =>
@@ -45,9 +50,9 @@ WebApplication app = builder.Build();
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 using IServiceScope scope = app.Services.CreateAsyncScope();
-AppDbContext db = scope.ServiceProvider
-    .GetRequiredService<AppDbContext>();
-await db.Database.EnsureCreatedAsync();
+FoodDbContext db = scope.ServiceProvider
+    .GetRequiredService<FoodDbContext>();
+await db.Database.MigrateAsync();
 
 if (builder.Configuration.GetValue<bool>("EnableDocs"))
 {

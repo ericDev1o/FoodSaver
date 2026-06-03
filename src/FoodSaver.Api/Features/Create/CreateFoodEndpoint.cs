@@ -9,7 +9,7 @@ public static class CreateFoodEndpoint
     {
         app.MapPost("/foods", static async (
             CreateFoodRequest request,
-            AppDbContext db,
+            FoodDbContext db,
             CancellationToken ct) =>
         {
             if (string.IsNullOrWhiteSpace(request.Name))
