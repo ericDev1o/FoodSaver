@@ -1,3 +1,11 @@
+import { 
+  useDispatch, 
+  useSelector 
+} from 'react-redux';
+
+import { selectSearchQuery } from '../search/selectors';
+import { setQuery } from '../search/searchSlice';
+
 import type { 
   Food, 
   UndoAction
@@ -32,14 +40,23 @@ export function FoodList({
   const tomorrow = new Date(todayDate);
   tomorrow.setDate(todayDate.getDate() + 1);
 
-  const visibleFoods = foods.filter(
-  food =>
-    food.quantity > 0
-    &&
-    food.expiryDate >= today
-);
+  const dispatch = useDispatch();
+  const query = useSelector(selectSearchQuery);
 
-  const sortedFoods = [...visibleFoods].sort(
+  const visibleFoods = foods.filter(
+    food =>
+      food.quantity > 0
+      &&
+      food.expiryDate >= today
+  );
+
+  const searchedFoods = visibleFoods.filter(food => 
+    food.name
+      .toLowerCase()
+       .startsWith(query.toLowerCase())
+  );
+
+  const sortedFoods = [...searchedFoods].sort(
     (a, b) => a.expiryDate.localeCompare(b.expiryDate)
   );
 
@@ -48,11 +65,20 @@ export function FoodList({
     0
   );
   const foodLabel = activeFoodsCount === 1 
-    ? "food" 
-    : "foods";
+    ? 'food' 
+    : 'foods';
   
   return (
     <>
+      <input
+        type='search'
+        placeholder='Search foods...'
+        value={query}
+        onChange={(event) =>
+          dispatch(setQuery(event.target.value))
+        }
+      />
+      
       <p>
           {activeFoodsCount} {foodLabel}
           {' '}to consume
@@ -114,7 +140,7 @@ export function FoodList({
                 )}
 
                 {undoAction?.foodId === food.id && (
-                  <div className="actions">
+                  <div className='actions'>
                     <button 
                       className='undo'
                       onClick={() => onUndo()}>

@@ -1,7 +1,7 @@
 /**
  * Please see ./accessibility.cy.ts
  */
-describe('food workflow', () => {
+describe('Food workflow', () => {
   beforeEach(() => {
     // Arrange
     cy.request({
@@ -24,10 +24,12 @@ describe('food workflow', () => {
     // Act - consume
     cy.contains('li', foodName)
       .within(() => {
-        cy.findByRole('button', { name: /consume/i }).click();
+        cy.findByRole('button', { name: /consume/i })
+          .click();
     });
 
-    cy.findByRole('button', { name: /confirm/i }).click();
+    cy.findByRole('button', { name: /confirm/i })
+      .click();
 
     // Assert - consumed
     cy.contains('li', foodName)
@@ -42,14 +44,17 @@ describe('food workflow', () => {
     createFood(foodName, 2);
 
     // Assert - created
-    cy.contains('li', foodName).should('contain.text', 'x2');
+    cy.contains('li', foodName)
+      .should('contain.text', 'x2');
 
     // Act - consume 1
     cy.contains('li', foodName).within(() => {
-      cy.findByRole('button', { name: /consume 1/i }).click();
+      cy.findByRole('button', { name: /consume 1/i })
+        .click();
     });
 
-    cy.findByRole('button', { name: /confirm/i }).click();
+    cy.findByRole('button', { name: /confirm/i })
+      .click();
 
     // Assert - consumed 1
     cy.contains('li', foodName)
@@ -65,17 +70,83 @@ describe('food workflow', () => {
     createFood(foodName, 2);
 
     // Assert - created
-    cy.contains('li', foodName).should('contain.text', 'x2');
+    cy.contains('li', foodName)
+      .should('contain.text', 'x2');
 
     // Act - consume all
     cy.contains('li', foodName).within(() => {
-      cy.findByRole('button', { name: /consume all/i }).click();
+      cy.findByRole('button', { name: /consume all/i })
+        .click();
     });
 
-  cy.findByRole('button', { name: /confirm/i }).click();
+  cy.findByRole('button', { name: /confirm/i })
+    .click();
 
     // Assert - consumed all
-    cy.contains('li', foodName).should('not.exist');
+    cy.contains('li', foodName)
+      .should('not.exist');
+  });
+});
+
+describe('Food search', () => {
+  beforeEach(() => {
+    // Arrange
+    cy.request({
+      url: 'https://foodsaver-api-00tb.onrender.com/foods'
+    });
+    cy.visit('/');
+
+    createFood('Milk', 1);
+    createFood('Apple', 1);
+    createFood('Bread', 1);
+
+    cy.contains('Milk')
+      .should('exist');
+    cy.contains('Apple')
+      .should('exist');
+    cy.contains('Bread')
+      .should('exist');
+  });
+
+  it('must search foods by name case-insensitively', () => {
+    // Act search lowercase
+    cy.get('input[type="search"]')
+      .type('mil');
+
+    // Assert search lowercase
+    cy.contains('Milk')
+      .should('exist');
+
+    cy.contains('Apple')
+      .should('not.exist');
+
+    cy.contains('Bread')
+      .should('not.exist');
+
+    // Act search uppercase
+    cy.get('input[type="search"]')
+      .clear()
+      .type('MIL');
+
+    // Assert search uppercase
+    cy.contains('Milk')
+      .should('exist');
+
+    cy.contains('Apple')
+      .should('not.exist');
+
+    cy.contains('Bread')
+      .should('not.exist');
+  });
+
+  it('must search foods by name prefix only', () => {
+    // Act
+    cy.get('input[type="search"]')
+      .type('k');
+
+    // Assert
+    cy.contains('Milk')
+      .should('not.exist');
   });
 });
 

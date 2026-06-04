@@ -6,7 +6,7 @@ import {
 import type {
   Food,
   UndoAction,
-} from './types';
+} from '../types';
 
 
 export function useFoodActions(
