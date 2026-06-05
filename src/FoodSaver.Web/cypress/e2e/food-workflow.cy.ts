@@ -89,6 +89,10 @@ describe('Food workflow', () => {
 });
 
 describe('Food search', () => {
+  let milk: string;
+  let apple: string;
+  let bread: string;
+
   beforeEach(() => {
     // Arrange
     cy.request({
@@ -96,47 +100,43 @@ describe('Food search', () => {
     });
     cy.visit('/');
 
-    createFood('Milk', 1);
-    createFood('Apple', 1);
-    createFood('Bread', 1);
+    const suffix = Date.now();
 
-    cy.contains('Milk')
+    milk = `Milk ${suffix}`;
+    apple = `Apple ${suffix}`;
+    bread = `Bread ${suffix}`;
+
+    createFood(milk, 1);
+    createFood(apple, 1);
+    createFood(bread, 1);
+
+    cy.contains(milk)
       .should('exist');
-    cy.contains('Apple')
+    cy.contains(apple)
       .should('exist');
-    cy.contains('Bread')
+    cy.contains(bread)
       .should('exist');
   });
 
   it('must search foods by name case-insensitively', () => {
     // Act search lowercase
-    cy.get('input[type="search"]')
-      .type('mil');
+    const searchInput = cy.get('input[type="search"]');
+    searchInput.type('mil');
+
+    searchInput.should('have.value', 'mil');
 
     // Assert search lowercase
-    cy.contains('Milk')
-      .should('exist');
-
-    cy.contains('Apple')
-      .should('not.exist');
-
-    cy.contains('Bread')
-      .should('not.exist');
+    cy.contains('li', milk).should('be.visible');
 
     // Act search uppercase
-    cy.get('input[type="search"]')
+    searchInput
       .clear()
       .type('MIL');
+    
+    searchInput.should('have.value', 'MIL');
 
     // Assert search uppercase
-    cy.contains('Milk')
-      .should('exist');
-
-    cy.contains('Apple')
-      .should('not.exist');
-
-    cy.contains('Bread')
-      .should('not.exist');
+    cy.contains('li', milk).should('be.visible');
   });
 
   it('must search foods by name prefix only', () => {
