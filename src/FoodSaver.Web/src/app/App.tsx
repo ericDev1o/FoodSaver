@@ -3,20 +3,20 @@ import {
   useState 
 } from 'react';
 
-import { FoodList } from '../feature/ui/FoodList';
-import { FoodForm } from '../feature/ui/FoodForm';
+import { FoodList } from '../features/foods/FoodList';
+import { FoodForm } from '../features/foods/FoodForm';
 
 import {
   getFoods,
   createFood
 } from '../api/food';
 
-import { useFoodActions } from '../feature/useFoodActions';
+import { useFoodActions } from '../features/foods/useFoodActions';
 
 import type {
   Food,
   CreateFoodRequest,
-} from '../feature/types';
+} from '../features/types';
 
 import './App.css';
 
@@ -47,7 +47,7 @@ export default function App() {
 
   useEffect(() => {
     loadFoods()
-    .catch(() => setError("Unable to load foods."))
+    .catch(() => setError('Unable to load foods.'))
     .finally(() => setIsLoading(false));
   }, []);
 

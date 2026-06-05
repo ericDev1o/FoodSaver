@@ -40,7 +40,7 @@ export function FoodForm({ onCreate }: Props) {
   return (
     <>
       <p 
-        className="error-text"
+        className='error-text'
         aria-live='assertive'
       >
         {error || ''}

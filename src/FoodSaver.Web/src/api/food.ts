@@ -1,7 +1,7 @@
 import type { 
     CreateFoodRequest, 
     Food 
-} from '../feature/types';
+} from '../features/types';
 
 const API_URL: string = import.meta.env.VITE_API_URL as string;
 
@@ -47,7 +47,7 @@ export async function consumeFood(
   const response = await fetch(`${API_URL}/foods/${id}/consume`, {
     method: 'PATCH',
     headers: {
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({ qty })
   });
