@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using FoodSaver.Api.Data;
 
@@ -11,11 +10,11 @@ namespace FoodSaver.Api.Tests;
 
 public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private SqliteConnection _connection = default!;
+    private readonly SqliteConnection _connection =
+        new("DataSource=:memory:");
 
     public async ValueTask InitializeAsync()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
         await _connection.OpenAsync();
 
         using IServiceScope scope = Services.CreateScope();
@@ -24,17 +23,18 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await db.Database.EnsureCreatedAsync();
     }
 
-    public new ValueTask DisposeAsync()
+    public new async ValueTask DisposeAsync()
     {
-        _connection.Dispose();
-        return ValueTask.CompletedTask;
+        await _connection.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Testing");
+
         builder.ConfigureServices(services =>
         {
-            services.RemoveAll<DbContextOptions<FoodDbContext>>();
+            services.AddSingleton(_connection);
 
             services.AddDbContext<FoodDbContext>(options =>
             {

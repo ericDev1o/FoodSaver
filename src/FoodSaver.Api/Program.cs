@@ -21,14 +21,23 @@ string[] origins = builder.Configuration
 
 builder.Services.AddOpenApi();
 
-string? connectionString = builder.Configuration.GetConnectionString("FoodSaver");
-if(string.IsNullOrWhiteSpace(connectionString))
-    throw new InvalidOperationException(
-        "Connection string 'FoodSaver' not found.");
-builder.Services.AddDbContext<FoodDbContext>(options =>
+if(builder.Environment.IsEnvironment("Testing"))
 {
-    options.UseSqlServer(connectionString);
-});
+    builder.Services.AddDbContext<FoodDbContext>(options =>
+    {
+        options.UseSqlite("DataSource=:memory:");
+    });
+}
+else {
+    string? connectionString = builder.Configuration.GetConnectionString("FoodSaver");
+    if(string.IsNullOrWhiteSpace(connectionString))
+        throw new InvalidOperationException(
+            "Connection string 'FoodSaver' not found.");
+    builder.Services.AddDbContext<FoodDbContext>(options =>
+    {
+        options.UseSqlServer(connectionString);
+    });
+}
 
 builder.Services.AddCors(options =>
 {
@@ -49,10 +58,12 @@ WebApplication app = builder.Build();
 
 app.Urls.Add($"http://0.0.0.0:{port}");
 
-using IServiceScope scope = app.Services.CreateAsyncScope();
-FoodDbContext db = scope.ServiceProvider
-    .GetRequiredService<FoodDbContext>();
-await db.Database.MigrateAsync();
+if(! app.Environment.IsEnvironment("Testing")) {
+    using IServiceScope scope = app.Services.CreateAsyncScope();
+    FoodDbContext db = scope.ServiceProvider
+        .GetRequiredService<FoodDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 if (builder.Configuration.GetValue<bool>("EnableDocs"))
 {
