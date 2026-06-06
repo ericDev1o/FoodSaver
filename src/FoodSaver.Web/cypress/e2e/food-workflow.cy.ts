@@ -106,16 +106,7 @@ describe('Food search', () => {
     apple = `Apple ${suffix}`;
     bread = `Bread ${suffix}`;
 
-    createFood(milk, 1);
-    createFood(apple, 1);
-    createFood(bread, 1);
-
-    cy.contains(milk)
-      .should('exist');
-    cy.contains(apple)
-      .should('exist');
-    cy.contains(bread)
-      .should('exist');
+    seedFoods([milk, apple, bread]);
   });
 
   it('must search foods by name case-insensitively', () => {
@@ -126,6 +117,8 @@ describe('Food search', () => {
 
     // Assert search lowercase
     cy.contains('li', milk).should('be.visible');
+    cy.contains('li', apple).should('not.exist');
+    cy.contains('li', bread).should('not.exist');
 
     // Act search uppercase
     cy.get('input[type="search"]')
@@ -135,6 +128,8 @@ describe('Food search', () => {
 
     // Assert search uppercase
     cy.contains('li', milk).should('be.visible');
+    cy.contains('li', apple).should('not.exist');
+    cy.contains('li', bread).should('not.exist');
   });
 
   it('must search foods by name prefix only', () => {
@@ -171,6 +166,10 @@ describe('Food filtering', () => {
     createFood(todayFood, 1, createExpiryDate(0));
     createFood(soonFood, 1, createExpiryDate(2));
     createFood(laterFood, 1, createExpiryDate(10));
+
+    cy.contains('li', todayFood).should('exist');
+    cy.contains('li', soonFood).should('exist');
+    cy.contains('li', laterFood).should('exist');
   });
 
   it('must show only foods expiring today', () => {
@@ -179,10 +178,9 @@ describe('Food filtering', () => {
       .select('Expiring today');
 
     // Assert
-    cy.get('ul')
-      .should('contain.text', todayFood)
-      .and('not.contain.text', soonFood)
-      .and('not.contain.text', laterFood);
+    cy.contains('li', todayFood).should('be.visible');
+    cy.contains('li', soonFood).should('not.exist');
+    cy.contains('li', laterFood).should('not.exist');
   });
 
   it('must show foods expiring within 3 days', () => {
@@ -191,10 +189,9 @@ describe('Food filtering', () => {
       .select('Expiring soon');
 
     // Assert
-    cy.get('ul')
-      .should('contain.text', todayFood)
-      .and('contain.text', soonFood)
-      .and('not.contain.text', laterFood);
+    cy.contains('li', todayFood).should('be.visible');
+    cy.contains('li', soonFood).should('be.visible');
+    cy.contains('li', laterFood).should('not.exist');
   });
 });
 
@@ -215,38 +212,45 @@ describe('Food sorting', () => {
     apple = `Apple ${suffix}`;
     bread = `Bread ${suffix}`;
 
-    createFood(bread, 1);
-    createFood(apple, 1);
+    seedFoods([apple, bread]);
   });
   
   it('must sort foods by name ascending', () => {
     // Act
-    cy.findByLabelText(/sort/i).select('Name (A-Z)');
+    cy.findByLabelText(/sort/i).select('Name A → Z');
 
     // Assert
-    cy.get('li').then(items => {
-      const names = [...items].map(i =>
-        i.textContent?.split(' x')[0]
-      );
+    cy.get('li')
+      .filter((_, el) =>
+        el.innerText.includes(apple) || el.innerText.includes(bread)
+      )
+      .should('have.length', 2)
+      .then(items => {
+        const names = [...items].map(i =>
+          i.innerText.split('\n')[0].split(' x')[0].trim()
+        );
 
-      expect(names[0]).to.contain('Apple');
-      expect(names[1]).to.contain('Bread');
-    });
+        expect(names).to.deep.equal([apple, bread]);
+      });
   });
 
   it('must sort foods by name descending', () => {
     // Act
-    cy.findByLabelText(/sort/i).select('Name (Z-A)');
+    cy.findByLabelText(/sort/i).select('Name Z → A');
 
     // Assert
-    cy.get('li').then(items => {
-      const names = [...items].map(i =>
-        i.textContent?.split(' x')[0]
-      );
+    cy.get('li')
+      .filter((_, el) =>
+        el.innerText.includes(apple) || el.innerText.includes(bread)
+      )
+      .should('have.length', 2)
+      .then(items => {
+        const names = [...items].map(i =>
+          i.innerText.split('\n')[0].split(' x')[0].trim()
+        );
 
-      expect(names[0]).to.contain('Bread');
-      expect(names[1]).to.contain('Apple');
-    });
+        expect(names).to.deep.equal([bread, apple]);
+      });
   });
 });
 
@@ -276,4 +280,11 @@ function createExpiryDate(days: number): string {
   date.setDate(date.getDate() + days);
 
   return date.toISOString().split('T')[0];
+}
+
+function seedFoods(names: string[]) {
+  cy.wrap(names).each((name: string) => {
+    createFood(name, 1);
+    cy.contains('li', name).should('exist');
+  });
 }
