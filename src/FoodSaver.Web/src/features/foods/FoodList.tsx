@@ -9,7 +9,7 @@ import {
   selectSort,
   selectUndoAction,
   selectVisibleFoods
-} from './FoodsSelectors';
+} from './foodsSelectors';
 import { 
   type FoodsFilter,
   type FoodsSort,
@@ -19,7 +19,7 @@ import {
   consumeFood,
   undoFoodAction,
   confirmFoodAction
-} from './FoodsSlice';
+} from './foodsSlice';
 
 import './FoodList.css'
 
