@@ -35,7 +35,11 @@ export function FoodForm({ onCreate }: Props) {
       expiryDate,
       quantity
     });
-  }, [name, expiryDate, quantity, onCreate]);
+
+    setName('');
+    setExpiryDate(todayString);
+    setQuantity(1);
+  }, [name, expiryDate, quantity, onCreate, todayString]);
   
   return (
     <>
@@ -60,7 +64,7 @@ export function FoodForm({ onCreate }: Props) {
         </label>
         <input
           id='name'
-          value={ name }
+          value={name}
           onChange={(e) => {setName(e.target.value)}}
           placeholder='Food name'  
         />
@@ -74,7 +78,7 @@ export function FoodForm({ onCreate }: Props) {
         <input
           id='date'
           type='date'
-          value={ expiryDate }
+          value={expiryDate}
           min={todayString}
           onChange={(e) => {setExpiryDate(e.target.value)}}
         />
@@ -88,9 +92,9 @@ export function FoodForm({ onCreate }: Props) {
         <input
           id='quantity' 
           type='number'
-          min='1'
-          value={ quantity }
-          onChange={(e) => {setQuantity(e.target.valueAsNumber)}}
+          min={1}
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.valueAsNumber)}
         />
 
         <button type='submit'>Add</button>

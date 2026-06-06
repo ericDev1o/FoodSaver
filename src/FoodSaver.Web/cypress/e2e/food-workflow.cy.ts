@@ -120,20 +120,18 @@ describe('Food search', () => {
 
   it('must search foods by name case-insensitively', () => {
     // Act search lowercase
-    const searchInput = cy.get('input[type="search"]');
-    searchInput.type('mil');
-
-    searchInput.should('have.value', 'mil');
+    cy.get('input[type="search"]')
+      .type('mil')
+      .should('have.value', 'mil');
 
     // Assert search lowercase
     cy.contains('li', milk).should('be.visible');
 
     // Act search uppercase
-    searchInput
+    cy.get('input[type="search"]')
       .clear()
-      .type('MIL');
-    
-    searchInput.should('have.value', 'MIL');
+      .type('MIL')
+      .should('have.value', 'MIL');
 
     // Assert search uppercase
     cy.contains('li', milk).should('be.visible');
@@ -145,18 +143,137 @@ describe('Food search', () => {
       .type('k');
 
     // Assert
-    cy.contains('Milk')
-      .should('not.exist');
+    cy.contains('li', milk).should('not.exist');
+    cy.contains('li', apple).should('not.exist');
+    cy.contains('li', bread).should('not.exist');
+  });
+});
+
+describe('Food filtering', () => {
+  let todayFood: string;
+  let soonFood: string;
+  let laterFood: string;
+
+  beforeEach(() => {
+    // Arrange
+    cy.request({
+      url: 'https://foodsaver-api-00tb.onrender.com/foods'
+    });
+
+    cy.visit('/');
+
+    const suffix = Date.now();
+
+    todayFood = `Today ${suffix}`;
+    soonFood = `Soon ${suffix}`;
+    laterFood = `Later ${suffix}`;
+
+    createFood(todayFood, 1, createExpiryDate(0));
+    createFood(soonFood, 1, createExpiryDate(2));
+    createFood(laterFood, 1, createExpiryDate(10));
+  });
+
+  it('must show only foods expiring today', () => {
+    // Act
+    cy.findByLabelText(/filter/i)
+      .select('Expiring today');
+
+    // Assert
+    cy.get('ul')
+      .should('contain.text', todayFood)
+      .and('not.contain.text', soonFood)
+      .and('not.contain.text', laterFood);
+  });
+
+  it('must show foods expiring within 3 days', () => {
+    // Act
+    cy.findByLabelText(/filter/i)
+      .select('Expiring soon');
+
+    // Assert
+    cy.get('ul')
+      .should('contain.text', todayFood)
+      .and('contain.text', soonFood)
+      .and('not.contain.text', laterFood);
+  });
+});
+
+describe('Food sorting', () => {
+  let apple: string;
+  let bread: string;
+
+  beforeEach(() => {
+    // Arrange
+    cy.request({
+      url: 'https://foodsaver-api-00tb.onrender.com/foods'
+    });
+
+    cy.visit('/');
+
+    const suffix = Date.now();
+
+    apple = `Apple ${suffix}`;
+    bread = `Bread ${suffix}`;
+
+    createFood(bread, 1);
+    createFood(apple, 1);
+  });
+  
+  it('must sort foods by name ascending', () => {
+    // Act
+    cy.findByLabelText(/sort/i).select('Name (A-Z)');
+
+    // Assert
+    cy.get('li').then(items => {
+      const names = [...items].map(i =>
+        i.textContent?.split(' x')[0]
+      );
+
+      expect(names[0]).to.contain('Apple');
+      expect(names[1]).to.contain('Bread');
+    });
+  });
+
+  it('must sort foods by name descending', () => {
+    // Act
+    cy.findByLabelText(/sort/i).select('Name (Z-A)');
+
+    // Assert
+    cy.get('li').then(items => {
+      const names = [...items].map(i =>
+        i.textContent?.split(' x')[0]
+      );
+
+      expect(names[0]).to.contain('Bread');
+      expect(names[1]).to.contain('Apple');
+    });
   });
 });
 
 function createFood(
-  foodName: string, 
-  quantity: number
+  foodName: string,
+  quantity: number,
+  expiryDate = '2026-12-31'
 ) {
-  cy.findByPlaceholderText(/food name/i).type(foodName);
-  cy.get('input[type="date"]').clear().type('2026-12-31');
-  cy.get('input[type="number"]').clear().type(quantity.toString());
+  cy.findByPlaceholderText(/food name/i)
+    .clear()
+    .type(foodName);
 
-  cy.findByRole('button', { name: /add/i }).click();
+  cy.get('input[type="date"]')
+    .clear()
+    .type(expiryDate);
+
+  cy.get('input[type="number"]')
+    .clear()
+    .type(quantity.toString());
+
+  cy.findByRole('button', { name: /add/i })
+    .click();
+}
+
+function createExpiryDate(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+
+  return date.toISOString().split('T')[0];
 }

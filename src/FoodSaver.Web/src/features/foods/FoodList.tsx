@@ -3,34 +3,27 @@ import {
   useSelector 
 } from 'react-redux';
 
-import { selectSearchQuery } from '../search/selectors';
-import { setQuery } from '../search/searchSlice';
-
-import type { 
-  Food, 
-  UndoAction
-} from '../types';
+import { 
+  selectFilter,
+  selectSearchQuery,
+  selectSort,
+  selectUndoAction,
+  selectVisibleFoods
+} from './FoodsSelectors';
+import { 
+  type FoodsFilter,
+  type FoodsSort,
+  setSearchQuery,
+  setFilterType,
+  setSortType,
+  consumeFood,
+  undoFoodAction,
+  confirmFoodAction
+} from './FoodsSlice';
 
 import './FoodList.css'
 
-type Props = {
-  foods: Food[];
-  onConsume: (
-    id: string,
-    qty: number
-  ) => void;
-  onUndo: () => void;
-  onConfirm: () => void;
-  undoAction: UndoAction | null;
-};
-
-export function FoodList({ 
-  foods, 
-  onConsume,
-  onUndo,
-  onConfirm,
-  undoAction
- }: Props) {
+export function FoodList() {
   const today = new Date().toISOString().split('T')[0];
 
   const todayDate = new Date();
@@ -42,25 +35,12 @@ export function FoodList({
 
   const dispatch = useDispatch();
   const query = useSelector(selectSearchQuery);
+  const visibleFoods = useSelector(selectVisibleFoods);
+  const filter = useSelector(selectFilter);
+  const sort = useSelector(selectSort);
+  const undoAction = useSelector(selectUndoAction);
 
-  const visibleFoods = foods.filter(
-    food =>
-      food.quantity > 0
-      &&
-      food.expiryDate >= today
-  );
-
-  const searchedFoods = visibleFoods.filter(food => 
-    food.name
-      .toLowerCase()
-       .startsWith(query.toLowerCase())
-  );
-
-  const sortedFoods = [...searchedFoods].sort(
-    (a, b) => a.expiryDate.localeCompare(b.expiryDate)
-  );
-
-  const activeFoodsCount = sortedFoods.reduce(
+  const activeFoodsCount = visibleFoods.reduce(
     (total, food) => total + food.quantity,
     0
   );
@@ -70,21 +50,57 @@ export function FoodList({
   
   return (
     <>
-      <input
-        type='search'
-        placeholder='Search foods...'
-        value={query}
-        onChange={(event) =>
-          dispatch(setQuery(event.target.value))
-        }
-      />
+      <div className='food-list-controls'>
+        <input
+          type='search'
+          placeholder='Search foods...'
+          value={query}
+          onChange={(event) =>
+            dispatch(setSearchQuery(event.target.value))
+          }
+        />
+
+        <label htmlFor='filter'>Filter:</label>
+        <select
+          id='filter'
+          value={filter}
+          onChange={(e) =>
+            dispatch(setFilterType(e.target.value as FoodsFilter))
+          }
+        >
+          <option value='all'>All fresh foods</option>
+          <option value='expiringSoon'>Expiring soon</option>
+          <option value='expiringToday'>Expiring today</option>
+        </select>
+
+        <label htmlFor='sort'>Sort:</label>
+        <select
+          id='sort'
+          value={sort}
+          onChange={(e) =>
+            dispatch(setSortType(e.target.value as FoodsSort))
+          }
+        >
+          <option value='expiryAsc'>
+            Expiry date
+          </option>
+
+          <option value='nameAsc'>
+            Name A → Z
+          </option>
+
+          <option value='nameDesc'>
+            Name Z → A
+          </option>
+        </select>
+      </div>
       
       <p>
           {activeFoodsCount} {foodLabel}
           {' '}to consume
         </p>
       <ul>
-        {sortedFoods.map((food) => {
+        {visibleFoods.map((food) => {
           const isExpired = food.expiryDate < today; 
           const expiryDate = new Date(food.expiryDate);
           expiryDate.setHours(0, 0, 0, 0);
@@ -122,7 +138,7 @@ export function FoodList({
               {food.quantity > 0 && (
               <>
                 <button onClick={() => {
-                  onConsume(food.id, 1);
+                  dispatch(consumeFood({id: food.id, qty: 1}));
                 }}
                 >
                   {food.quantity === 1
@@ -132,7 +148,7 @@ export function FoodList({
 
                 {food.quantity > 1 && (
                   <button onClick={() => {
-                    onConsume(food.id, food.quantity);
+                    dispatch(consumeFood({id: food.id, qty: food.quantity}));
                   }}
                   >
                     Consume all
@@ -143,11 +159,11 @@ export function FoodList({
                   <div className='actions'>
                     <button 
                       className='undo'
-                      onClick={() => onUndo()}>
+                      onClick={() => dispatch(undoFoodAction())}>
                       Undo
                     </button>
 
-                    <button onClick={() => onConfirm()}>
+                    <button onClick={() => dispatch(confirmFoodAction())}>
                       Confirm
                     </button>
                   </div>

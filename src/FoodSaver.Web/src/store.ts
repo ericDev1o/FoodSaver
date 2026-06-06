@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import searchReducer from './features/search/searchSlice';
+import searchReducer from './features/foods/FoodsSlice';
 
 export const foodSaverStore = configureStore({
     reducer: {
-        search: searchReducer
+        foods: searchReducer
     }
 });
 

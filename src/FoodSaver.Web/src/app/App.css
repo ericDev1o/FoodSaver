@@ -67,6 +67,32 @@ h1 {
   white-space: nowrap;
 }
 
+.food-list-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.food-list-controls input[type="search"] {
+  flex: 2;
+}
+
+.food-list-controls select {
+  flex: 1;
+}
+
+input,
+select {
+  font: inherit;
+
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+
+  min-width: 0;
+}
+
 button {
   padding: 0.75rem 1rem;
   border: none;

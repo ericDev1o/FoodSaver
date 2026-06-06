@@ -1,7 +1,12 @@
 import { 
+  useCallback,
   useEffect,
   useState 
 } from 'react';
+
+import { useDispatch } from 'react-redux';
+
+import { addFood } from '../features/foods/FoodsSlice';
 
 import { FoodList } from '../features/foods/FoodList';
 import { FoodForm } from '../features/foods/FoodForm';
@@ -11,17 +16,12 @@ import {
   createFood
 } from '../api/food';
 
-import { useFoodActions } from '../features/foods/useFoodActions';
-
-import type {
-  Food,
-  CreateFoodRequest,
-} from '../features/types';
+import type { CreateFoodRequest } from '../features/types';
 
 import './App.css';
 
+
 export default function App() {
-  const [foods, setFoods] = useState<Food[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [scrolled, setScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,27 +29,42 @@ export default function App() {
 
   const isDark = theme === 'dark';
 
-  const {
-    consumeFood,
-    undo,
-    confirm,
-    undoAction
-  } = useFoodActions(foods, setFoods);
+  const dispatch = useDispatch();
 
-  async function handleCreateFood(
+  const handleCreateFood = useCallback(async (
     request: CreateFoodRequest
-  ) 
+  ) =>
   {
-    const newFood = await createFood(request);
+    try{
+      const newFood = await createFood(request);
 
-    setFoods(prev => [...prev, newFood]);
-  }
+      dispatch(addFood({
+      ...newFood,
+      id: newFood.id ?? crypto.randomUUID(),
+      }));
+    } catch {
+      setError('Failed to create food.')
+    }
+  }, [dispatch]);
 
   useEffect(() => {
-    loadFoods()
-    .catch(() => setError('Unable to load foods.'))
-    .finally(() => setIsLoading(false));
-  }, []);
+    (async () =>  {
+      try {
+        const fetchedFoods = await getFoods();
+
+        fetchedFoods.forEach(food =>
+          dispatch(addFood({
+            ...food,
+            id: food.id ?? crypto.randomUUID()
+          }))
+        );
+      } catch { 
+        setError('Unable to load foods.'); 
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [dispatch]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -70,7 +85,7 @@ export default function App() {
       className='error-text'
       aria-live='assertive'
     >
-        {error}
+      {error}
     </p>
     );
 
@@ -101,18 +116,7 @@ export default function App() {
         ) : (
           <>
             <FoodForm onCreate={handleCreateFood} />
-
-            {foods.length === 0 ? (
-                <p>Add your first food to get started.</p>
-              ) : (
-                <FoodList
-                  foods={foods}
-                  onConsume={consumeFood}
-                  onUndo={undo}
-                  onConfirm={confirm}
-                  undoAction={undoAction}
-                />
-              )}
+            <FoodList />
           </>
         )}
       </main>
@@ -121,11 +125,6 @@ export default function App() {
       </footer>
     </div>
   );
-
-  async function loadFoods() {
-    const foods = await getFoods();
-    setFoods(foods);
-  }
 
   function toggleTheme() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
