@@ -116,8 +116,8 @@ export default function App() {
         ) : (
           <>
             <FoodForm onCreate={handleCreateFood} />
-            <FoodList />
             <Dashboard />
+            <FoodList />
           </>
         )}
       </main>

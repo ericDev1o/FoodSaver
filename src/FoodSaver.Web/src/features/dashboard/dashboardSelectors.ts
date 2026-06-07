@@ -1,6 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import { selectVisibleFoods } from '../foods/foodsSelectors';
+import { 
+  selectFoods, 
+  selectVisibleFoods 
+} from '../foods/foodsSelectors';
+
+import type { Food } from '../types';
 
 export const selectTotalFoods = createSelector(
   [selectVisibleFoods],
@@ -63,4 +68,63 @@ export const selectNextExpiryFood = createSelector(
         )
     )[0];
   }
+);
+
+export const selectOldestFood = createSelector(
+  [selectFoods],
+  foods => {
+    if (foods.length === 0) return null;
+
+    return [...foods].sort(
+      (a, b) => new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime()
+    )[0];
+  }
+);
+
+export const selectOldestFoodDate = createSelector(
+  [selectOldestFood],
+  oldestFood => {
+    if(! oldestFood) 
+      return 'None';
+    return new Date(oldestFood.expiryDate)
+      .toLocaleDateString(
+        'en-GB',
+        {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        }
+      );
+  }
+);
+
+export const isExpiringSoon = (food: Food) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const expiry = new Date(food.expiryDate);
+  expiry.setHours(0, 0, 0, 0);
+
+  const diff =
+    (expiry.getTime() - today.getTime()) /
+    (1000 * 60 * 60 * 24);
+
+  return diff >= 0 && diff <= 3;
+};
+
+export const selectExpiringSoonFoods = createSelector(
+  [selectFoods],
+  foods => foods.filter(isExpiringSoon)
+);
+
+export const selectExpiringSoonSummary = createSelector(
+  [selectFoods, selectExpiringSoonFoods],
+  (foods, soonFoods) => ({
+    percentage:
+      foods.length === 0
+        ? 0
+        : Math.round((soonFoods.length / foods.length) * 100),
+    count: soonFoods.length,
+    total: foods.length
+  })
 );

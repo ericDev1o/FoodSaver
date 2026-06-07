@@ -51,7 +51,9 @@ export function FoodList() {
   return (
     <>
       <div className='food-list-controls'>
+        <label htmlFor='search'>Search:</label>
         <input
+          id='search'
           type='search'
           placeholder='Search foods...'
           value={query}
