@@ -11,8 +11,9 @@ describe('Dashboard', () => {
   let soonFood: string;
   let laterFood: string;
 
-  beforeEach(() => {
+  it('must refresh dashboard counters when foods are added', () => {
     // Arrange
+    // Wake up API before loading UI
     cy.request({
       url: 'https://foodsaver-api-00tb.onrender.com/foods'
     });
@@ -24,30 +25,29 @@ describe('Dashboard', () => {
     todayFood = `Today ${suffix}`;
     soonFood = `Soon ${suffix}`;
     laterFood = `Later ${suffix}`;
-
+   
+    // Act
     createFood(todayFood, 2, createExpiryDate(0));
     createFood(soonFood, 3, createExpiryDate(2));
     createFood(laterFood, 1, createExpiryDate(10));
-  });
 
-  it('must display inventory insights', () => {
     // Assert
     cy.findByRole('heading', { name: /dashboard/i, level: 2 })
       .should('be.visible');
 
-    cy.contains(/total foods/i)
+    cy.contains('p', 'Total foods:')
       .should('contain.text', '3');
 
-    cy.contains(/total quantity/i)
+    cy.contains('p', 'Total quantity')
       .should('contain.text', '6');
 
-    cy.contains(/expiring today/i)
+    cy.contains('p', 'Expiring today')
       .should('contain.text', '1');
 
-    cy.contains(/expiring soon/i)
+    cy.contains('p', 'Expiring soon')
       .should('contain.text', '2');
 
-    cy.contains(/next expiry/i)
+    cy.contains('p', 'Next expiry')
       .should('contain.text', todayFood);
   });
 });

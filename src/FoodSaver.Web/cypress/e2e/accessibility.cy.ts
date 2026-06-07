@@ -8,7 +8,13 @@
 describe('Accessibility Tests', () => {
   it('must have no accessibility violations.', () => {
     // Arrange
-    cy.visit('https://foodsaver-web.onrender.com');
+    // Wake up API before loading UI
+    cy.request({
+      url: 'https://foodsaver-api-00tb.onrender.com/foods'
+    });
+
+    cy.visit('/');
+    
     cy.contains('h1', 'FoodSaver');
 
     // Act

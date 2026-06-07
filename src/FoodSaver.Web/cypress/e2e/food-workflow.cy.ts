@@ -9,6 +9,7 @@ import {
 describe('Food workflow', () => {
   beforeEach(() => {
     // Arrange
+    // Wake up API before loading UI
     cy.request({
       url: 'https://foodsaver-api-00tb.onrender.com/foods'
     });
