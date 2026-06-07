@@ -54,23 +54,7 @@ export const selectExpiringSoonCount = createSelector(
   }
 );
 
-export const selectNextExpiryFood = createSelector(
-  [selectVisibleFoods],
-  foods => {
-    if (foods.length === 0) {
-      return null;
-    }
-
-    return [...foods].sort(
-      (a, b) =>
-        a.expiryDate.localeCompare(
-          b.expiryDate
-        )
-    )[0];
-  }
-);
-
-export const selectOldestFood = createSelector(
+export const selectNextExpiringFood = createSelector(
   [selectFoods],
   foods => {
     if (foods.length === 0) return null;
@@ -82,7 +66,7 @@ export const selectOldestFood = createSelector(
 );
 
 export const selectOldestFoodDate = createSelector(
-  [selectOldestFood],
+  [selectNextExpiringFood],
   oldestFood => {
     if(! oldestFood) 
       return 'None';

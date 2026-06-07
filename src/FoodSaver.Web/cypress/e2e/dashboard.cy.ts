@@ -50,12 +50,13 @@ describe('Dashboard visible list counters', () => {
         cy.wrap(value).as('initialToday');
       });
 
-    cy.contains('p', 'Expiring soon')
-     .should('be.visible')
-      .then($el => {
-        const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
-        cy.wrap(value).as('initialSoon');
-      });
+    cy.contains('article', 'Inventory summary')
+      .contains('p', 'Expiring soon')
+      .should('be.visible')
+        .then($el => {
+          const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
+          cy.wrap(value).as('initialSoon');
+        });
 
     // Act
     createFood(todayFood, 2, createExpiryDate(0));
@@ -86,17 +87,15 @@ describe('Dashboard visible list counters', () => {
 
     cy.get('@initialSoon')
       .then(initialSoon => {
-        cy.contains('p', 'Expiring soon')
+        cy.contains('article', 'Inventory summary')
+          .contains('p', 'Expiring soon')
           .should('contain.text', String(Number(initialSoon) + 2));
       });
-
-    cy.contains('p', 'Next expiry')
-      .should('contain.text', todayFood);
   });
 });
 
 describe('Dashboard global insights', () => {
-  it('must display oldest food from existing inventory', () => {
+  it('must display next expiring food from existing inventory', () => {
     // Act
     cy.get('li')
       .should('have.length.greaterThan', 0)
@@ -108,22 +107,31 @@ describe('Dashboard global insights', () => {
 
           return {
             name: match?.[1]?.trim(),
-            date: match?.[2] ? new Date(match[2]) : null
+            date: match?.[2] ? parseFoodDate(match[2]) : null
           };
         }).filter(x => x.date !== null) as {
           name: string;
           date: Date;
         }[];
 
-        const oldest = parsed.reduce((min, curr) =>
+        const next = parsed.reduce((min, curr) =>
           curr.date < min.date ? curr : min
+        );
+
+        const expectedDate = next.date.toLocaleDateString(
+          'en-GB',
+          {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          }
         );
 
         // Assert
         cy.contains('p', 'Oldest food:')
           .should('be.visible')
-          .should('contain.text', oldest.name)
-          .and('contain.text', oldest.date.toLocaleDateString('en-GB'))
+          .should('contain.text', next.name)
+          .and('contain.text', expectedDate)
       });
   });
 
@@ -142,7 +150,7 @@ describe('Dashboard global insights', () => {
           const match = text.match(/(.+)\s+x\d+\s+expires on\s+(.+)/);
           if (!match) return null;
 
-          const date = new Date(match[2]);
+          const date = parseFoodDate(match[2]);
           date.setHours(0, 0, 0, 0);
 
           return date;
@@ -161,9 +169,41 @@ describe('Dashboard global insights', () => {
         const expected = Math.round((soon / total) * 100);
 
         // Assert
-        cy.contains('p', /^Expiring soon:/)
+        cy.contains('article', 'Global insights')
+          .contains('p', /^Expiring soon:/)
           .should('be.visible')
           .and('contain.text', `${expected}%`);
       });
   });
 });
+
+const months: Record<string, number> = {
+  Jan: 0,
+  Feb: 1,
+  Mar: 2,
+  Apr: 3,
+  May: 4,
+  Jun: 5,
+  Jul: 6,
+  Aug: 7,
+  Sep: 8,
+  Oct: 9,
+  Nov: 10,
+  Dec: 11
+};
+
+function parseFoodDate(text: string): Date {
+  const match = text.match(/(\d+)\s+(\w+)\s+(\d{4})/);
+
+  if (!match) {
+    throw new Error(`Invalid date: ${text}`);
+  }
+
+  const [, day, month, year] = match;
+
+  return new Date(
+    Number(year),
+    months[month],
+    Number(day)
+  );
+}

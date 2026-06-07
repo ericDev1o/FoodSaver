@@ -5,8 +5,7 @@ import {
     selectTotalQuantity, 
     selectExpiringTodayCount, 
     selectExpiringSoonCount, 
-    selectNextExpiryFood, 
-    selectOldestFood,
+    selectNextExpiringFood,
     selectExpiringSoonSummary,
     selectOldestFoodDate
 } from './dashboardSelectors';
@@ -16,9 +15,8 @@ export default function Dashboard() {
     const visibleTotalQuantity = useSelector(selectTotalQuantity);
     const visibleExpiringToday = useSelector(selectExpiringTodayCount);
     const visibleExpiringSoon = useSelector(selectExpiringSoonCount);
-    const visibleNextExpiryFood = useSelector(selectNextExpiryFood);
 
-    const globalOldestFood = useSelector(selectOldestFood);
+    const globalNextExpiringFood = useSelector(selectNextExpiringFood);
     const globalOldestExpiryDate = useSelector(selectOldestFoodDate);
     const globalExpiringSoonSummary = useSelector(selectExpiringSoonSummary);
 
@@ -28,8 +26,8 @@ export default function Dashboard() {
             <article>
                 <h3>Global insights</h3>
                 <p>
-                    Oldest food: {globalOldestFood?.name ?? 'None'}
-                    {globalOldestFood && ` — expires ${globalOldestExpiryDate}`}
+                    Oldest food: {globalNextExpiringFood?.name ?? 'None'}
+                    {globalNextExpiringFood && ` — expires ${globalOldestExpiryDate}`}
                 </p>
                 <p>Expiring soon: {globalExpiringSoonSummary.percentage}% ({globalExpiringSoonSummary.count} of {globalExpiringSoonSummary.total})</p>
             </article>
@@ -40,11 +38,6 @@ export default function Dashboard() {
                 <p>Total quantity: {visibleTotalQuantity}</p>
                 <p>Expiring today: {visibleExpiringToday}</p>
                 <p>Expiring soon: {visibleExpiringSoon}</p>
-                <p>
-                    Next expiry:
-                    {' '}
-                    {visibleNextExpiryFood?.name ?? 'None'}
-                </p>
             </article>
         </section>
     );
