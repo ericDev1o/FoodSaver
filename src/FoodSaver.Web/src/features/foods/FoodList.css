@@ -39,11 +39,12 @@ li .undo {
 
 li .soon-badge {
   color: red;
-  font-size: 1.35rem;
+  font-size: 1.6rem;
+  font-weight: bold;
 }
 
 li .today-badge {
   color: red;
-  font-size: 1.35rem;
-  font-weight: bold;
+  font-size: 1.6rem;
+  font-weight: bolder;
 }

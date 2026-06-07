@@ -33,6 +33,10 @@ describe('Accessibility Tests', () => {
           cy.log(violation.id);
           cy.log(violation.description);
           cy.log(violation.help);
+
+          violation.nodes.forEach(node => {
+            cy.log(node.html);
+          });
         });
       }
     );
