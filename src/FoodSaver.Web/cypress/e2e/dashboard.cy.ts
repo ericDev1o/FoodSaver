@@ -175,6 +175,40 @@ describe('Dashboard global insights', () => {
           .and('contain.text', `${expected}%`);
       });
   });
+
+  it('must count foods with quantity equal to one', () => {
+    // Arrange
+    cy.contains('p', 'Low stock foods')
+      .should('be.visible')
+      .then($el => {
+        const value = Number(
+          $el.text().match(/\d+/)?.[0] ?? 0
+        );
+
+        cy.wrap(value).as('initialLowStock');
+      });
+
+    const suffix = Date.now();
+
+    const foodQty1_1: string = `Low stock food ${suffix}`;
+    const foodQty1_2: string = `Low stock food ${suffix}`;
+    const foodQty3: string = `Normal stock food ${suffix}`;
+
+    // Act
+    createFood(foodQty1_1, 1, createExpiryDate(5));
+    createFood(foodQty1_2, 1, createExpiryDate(10));
+    createFood(foodQty3, 3, createExpiryDate(15));
+
+    // Assert
+    cy.get('@initialLowStock')
+      .then(initialLowStock => {
+        cy.contains('p', 'Low stock foods')
+          .should(
+            'contain.text',
+            String(Number(initialLowStock) + 2)
+          );
+      });
+  })
 });
 
 const months: Record<string, number> = {
