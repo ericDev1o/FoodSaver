@@ -75,3 +75,8 @@ export const selectVisibleFoods = createSelector(
     return applySort(applyFilter(searched, filter), sort);
   }
 );
+
+export const selectLowStockFoods = createSelector(
+  [selectFoods],
+  foods => foods.filter(food => food.quantity === 1)
+);
