@@ -5,7 +5,7 @@ import type { Food } from '../types';
 import type { 
   FoodsFilter, 
   FoodsSort 
-} from './FoodsSlice';
+} from './foodsSlice';
 
 export const selectFoods = (state: RootState) => state.foods.foods;
 export const selectSearchQuery = (state: RootState) => state.foods.searchQuery;

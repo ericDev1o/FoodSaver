@@ -6,10 +6,11 @@ import {
 
 import { useDispatch } from 'react-redux';
 
-import { addFood } from '../features/foods/FoodsSlice';
+import { addFood } from '../features/foods/foodsSlice';
 
 import { FoodList } from '../features/foods/FoodList';
 import { FoodForm } from '../features/foods/FoodForm';
+import Dashboard from '../features/dashboard/Dashboard';
 
 import {
   getFoods,
@@ -19,7 +20,6 @@ import {
 import type { CreateFoodRequest } from '../features/types';
 
 import './App.css';
-
 
 export default function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
@@ -116,6 +116,7 @@ export default function App() {
         ) : (
           <>
             <FoodForm onCreate={handleCreateFood} />
+            <Dashboard />
             <FoodList />
           </>
         )}

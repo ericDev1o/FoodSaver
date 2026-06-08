@@ -38,12 +38,13 @@ li .undo {
 }
 
 li .soon-badge {
-  color: red;
-  font-size: 1.35rem;
+  color: #7c2d12;
+  font-size: 1.6rem;
+  font-weight: bold;
 }
 
 li .today-badge {
-  color: red;
-  font-size: 1.35rem;
-  font-weight: bold;
+  color: #7f1d1d;;
+  font-size: 1.6rem;
+  font-weight: bolder;
 }
