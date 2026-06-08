@@ -1,9 +1,15 @@
+import {
+  createFood,
+  createExpiryDate
+} from '../support/food-helpers'
+
 /**
  * Please see ./accessibility.cy.ts
  */
 describe('Food workflow', () => {
   beforeEach(() => {
     // Arrange
+    // Wake up API before loading UI
     cy.request({
       url: 'https://foodsaver-api-00tb.onrender.com/foods'
     });
@@ -253,34 +259,6 @@ describe('Food sorting', () => {
       });
   });
 });
-
-function createFood(
-  foodName: string,
-  quantity: number,
-  expiryDate = '2026-12-31'
-) {
-  cy.findByPlaceholderText(/food name/i)
-    .clear()
-    .type(foodName);
-
-  cy.get('input[type="date"]')
-    .clear()
-    .type(expiryDate);
-
-  cy.get('input[type="number"]')
-    .clear()
-    .type(quantity.toString());
-
-  cy.findByRole('button', { name: /add/i })
-    .click();
-}
-
-function createExpiryDate(days: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-
-  return date.toISOString().split('T')[0];
-}
 
 function seedFoods(names: string[]) {
   cy.wrap(names).each((name: string) => {

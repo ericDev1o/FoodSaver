@@ -9,7 +9,7 @@ import {
   selectSort,
   selectUndoAction,
   selectVisibleFoods
-} from './FoodsSelectors';
+} from './foodsSelectors';
 import { 
   type FoodsFilter,
   type FoodsSort,
@@ -19,7 +19,7 @@ import {
   consumeFood,
   undoFoodAction,
   confirmFoodAction
-} from './FoodsSlice';
+} from './foodsSlice';
 
 import './FoodList.css'
 
@@ -51,7 +51,9 @@ export function FoodList() {
   return (
     <>
       <div className='food-list-controls'>
+        <label htmlFor='search'>Search:</label>
         <input
+          id='search'
           type='search'
           placeholder='Search foods...'
           value={query}
