@@ -9,6 +9,7 @@ import {
     selectExpiringSoonSummary,
     selectOldestFoodDate
 } from './dashboardSelectors';
+import { selectLowStockFoods } from '../foods/foodsSelectors';
 
 export default function Dashboard() {
     const visibleTotalFoods = useSelector(selectTotalFoods);
@@ -19,6 +20,7 @@ export default function Dashboard() {
     const globalNextExpiringFood = useSelector(selectNextExpiringFood);
     const globalOldestExpiryDate = useSelector(selectOldestFoodDate);
     const globalExpiringSoonSummary = useSelector(selectExpiringSoonSummary);
+    const globalLowStockCount = useSelector(selectLowStockFoods).length;
 
     return(
         <section>
@@ -30,6 +32,7 @@ export default function Dashboard() {
                     {globalNextExpiringFood && ` — expires ${globalOldestExpiryDate}`}
                 </p>
                 <p>Expiring soon: {globalExpiringSoonSummary.percentage}% ({globalExpiringSoonSummary.count} of {globalExpiringSoonSummary.total})</p>
+                <p>Low stock foods: {globalLowStockCount}</p>
             </article>
 
             <article>

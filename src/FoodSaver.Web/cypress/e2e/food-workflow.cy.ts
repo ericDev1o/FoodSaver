@@ -1,21 +1,21 @@
 import {
   createFood,
   createExpiryDate
-} from '../support/food-helpers'
+} from '../support/food-helpers';
+
+beforeEach(() => {
+  // Arrange
+  // Wake up API before loading UI
+  cy.request({
+    url: 'https://foodsaver-api-00tb.onrender.com/foods'
+  });
+  cy.visit('/');
+});
 
 /**
  * Please see ./accessibility.cy.ts
  */
 describe('Food workflow', () => {
-  beforeEach(() => {
-    // Arrange
-    // Wake up API before loading UI
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-    cy.visit('/');
-  });
-
   it('must create and consume a food item.', () => {
     // Arrange
     const foodName = `Milk e2e test ${Date.now()}`;
@@ -101,11 +101,6 @@ describe('Food search', () => {
 
   beforeEach(() => {
     // Arrange
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-    cy.visit('/');
-
     const suffix = Date.now();
 
     milk = `Milk ${suffix}`;
@@ -157,12 +152,6 @@ describe('Food filtering', () => {
 
   beforeEach(() => {
     // Arrange
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-
-    cy.visit('/');
-
     const suffix = Date.now();
 
     todayFood = `Today ${suffix}`;
@@ -199,6 +188,28 @@ describe('Food filtering', () => {
     cy.contains('li', soonFood).should('be.visible');
     cy.contains('li', laterFood).should('not.exist');
   });
+
+  it('must show only low stock foods when filter is applied', () => {
+    // Arrange
+    const suffix = Date.now();
+
+    const low1 = `Low 1 ${suffix}`;
+    const low2 = `Low 2 ${suffix}`;
+    const normal = `Normal ${suffix}`;
+
+    // Act
+    createFood(low1, 1, createExpiryDate(10));
+    createFood(low2, 1, createExpiryDate(10));
+    createFood(normal, 3, createExpiryDate(10));
+
+    cy.findByLabelText(/filter/i)
+      .select('Low stock');
+
+    // Assert
+    cy.contains('li', low1).should('be.visible');
+    cy.contains('li', low2).should('be.visible');
+    cy.contains('li', normal).should('not.exist');
+  });
 });
 
 describe('Food sorting', () => {
@@ -207,12 +218,6 @@ describe('Food sorting', () => {
 
   beforeEach(() => {
     // Arrange
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-
-    cy.visit('/');
-
     const suffix = Date.now();
 
     apple = `Apple ${suffix}`;
@@ -259,6 +264,27 @@ describe('Food sorting', () => {
       });
   });
 });
+
+describe('Food stock', () => {
+  it('must display low stock badge for foods with quantity one', () => {
+    // Arrange
+    const suffix = Date.now();
+
+    const lowStockFood: string = `Low stock food ${suffix}`;
+    const normalFood: string = `Normal stock food ${suffix}`;
+
+    // Act
+    createFood(lowStockFood, 1, createExpiryDate(10));
+    createFood(normalFood, 3, createExpiryDate(10));
+
+    // Assert
+    cy.contains('li', lowStockFood)
+      .should('contain.text', 'Low stock');
+
+    cy.contains('li', normalFood)
+      .should('not.contain.text', 'Low stock');
+  });
+})
 
 function seedFoods(names: string[]) {
   cy.wrap(names).each((name: string) => {

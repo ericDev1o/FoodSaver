@@ -73,6 +73,7 @@ export function FoodList() {
           <option value='all'>All fresh foods</option>
           <option value='expiringSoon'>Expiring soon</option>
           <option value='expiringToday'>Expiring today</option>
+          <option value="lowStock">Low stock</option>
         </select>
 
         <label htmlFor='sort'>Sort:</label>
@@ -123,6 +124,11 @@ export function FoodList() {
             <li key={food.id}>
               <span>
                 {food.name} x{food.quantity}
+                {food.quantity === 1 && (
+                  <span className='low-stock-badge'>
+                    Low stock
+                  </span>
+                )}
                 {isExpired ? ' expired ' : ' expires '} 
                 on {' '} 
                 {new Date(food.expiryDate)
