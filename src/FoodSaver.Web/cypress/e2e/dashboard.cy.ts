@@ -136,44 +136,41 @@ describe('Dashboard global insights', () => {
   });
 
   it('must display correct expiring soon percentage', () => {
-    // Arrange
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Arrange - snapshot initial UI value
+    cy.contains('article', 'Global insights')
+      .contains('p', /^Expiring soon:/)
+      .should('be.visible')
+      .then($el => {
+        const initialText = $el.text();
+        const initialMatch = initialText.match(/\((\d+) of (\d+)\)/);
 
-    // Act
-    cy.get('li')
-      .should('have.length.greaterThan', 0)
-      .then(items => {
-        const foods = [...items].map(el => {
-          const text = el.textContent ?? '';
+        const soonBefore = Number(initialMatch?.[1] ?? 0);
+        const totalBefore = Number(initialMatch?.[2] ?? 0);
 
-          const match = text.match(/(.+)\s+x\d+\s+expires on\s+(.+)/);
-          if (!match) return null;
-
-          const date = parseFoodDate(match[2]);
-          date.setHours(0, 0, 0, 0);
-
-          return date;
-        }).filter(Boolean) as Date[];
-
-        const total = foods.length;
-
-        const soon = foods.filter(date => {
-          const diffDays =
-            (date.getTime() - today.getTime()) /
-            (1000 * 60 * 60 * 24);
-
-          return diffDays >= 0 && diffDays <= 3;
-        }).length;
-
-        const expected = Math.round((soon / total) * 100);
-
-        // Assert
-        cy.contains('article', 'Global insights')
-          .contains('p', /^Expiring soon:/)
-          .should('be.visible')
-          .and('contain.text', `${expected}%`);
+        const expectedPercent = Math.round(
+          ((soonBefore + 2) / (totalBefore + 3)) * 100
+        );
+        cy.wrap(expectedPercent).as('expectedPercent');
       });
+
+    const suffix = Date.now();
+
+    const foodSoon1 = `Soon food 1 ${suffix}`;
+    const foodSoon2 = `Soon food 2 ${suffix}`;
+    const foodLater3 = `Later food ${suffix}`;
+
+    // Act - controlled dataset
+    createFood(foodSoon1, 1, createExpiryDate(1));
+    createFood(foodSoon2, 1, createExpiryDate(2));
+    createFood(foodLater3, 1, createExpiryDate(10));
+
+    // Assert - deterministic recalculation from controlled data only
+    cy.get('@expectedPercent').then(expectedPercent => {
+      cy.contains('article', 'Global insights')
+        .contains('p', /^Expiring soon:/)
+        .should('be.visible')
+        .and('contain.text', `${expectedPercent}%`);
+    });
   });
 
   it('must count foods with quantity equal to one', () => {
