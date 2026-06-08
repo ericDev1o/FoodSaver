@@ -123,6 +123,11 @@ export function FoodList() {
             <li key={food.id}>
               <span>
                 {food.name} x{food.quantity}
+                {food.quantity === 1 && (
+                  <span className='low-stock-badge'>
+                    Low stock
+                  </span>
+                )}
                 {isExpired ? ' expired ' : ' expires '} 
                 on {' '} 
                 {new Date(food.expiryDate)

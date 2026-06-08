@@ -260,6 +260,27 @@ describe('Food sorting', () => {
   });
 });
 
+describe('Food stock', () => {
+  it('must display low stock badge for foods with quantity one', () => {
+    // Arrange
+    const suffix = Date.now();
+
+    const lowStockFood: string = `Low stock food ${suffix}`;
+    const normalFood: string = `Normal stock food ${suffix}`;
+
+    // Act
+    createFood(lowStockFood, 1, createExpiryDate(10));
+    createFood(normalFood, 3, createExpiryDate(10));
+
+    // Assert
+    cy.contains('li', lowStockFood)
+      .should('contain.text', 'Low stock');
+
+    cy.contains('li', normalFood)
+      .should('not.contain.text', 'Low stock');
+  });
+})
+
 function seedFoods(names: string[]) {
   cy.wrap(names).each((name: string) => {
     createFood(name, 1);

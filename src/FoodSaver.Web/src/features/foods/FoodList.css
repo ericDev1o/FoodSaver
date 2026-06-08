@@ -48,3 +48,8 @@ li .today-badge {
   font-size: 1.6rem;
   font-weight: bolder;
 }
+
+li .low-stock-badge {
+  color: #4a2c0a;
+  font-weight: bold;
+}
