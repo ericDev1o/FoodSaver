@@ -188,6 +188,28 @@ describe('Food filtering', () => {
     cy.contains('li', soonFood).should('be.visible');
     cy.contains('li', laterFood).should('not.exist');
   });
+
+  it('must show only low stock foods when filter is applied', () => {
+    // Arrange
+    const suffix = Date.now();
+
+    const low1 = `Low 1 ${suffix}`;
+    const low2 = `Low 2 ${suffix}`;
+    const normal = `Normal ${suffix}`;
+
+    // Act
+    createFood(low1, 1, createExpiryDate(10));
+    createFood(low2, 1, createExpiryDate(10));
+    createFood(normal, 3, createExpiryDate(10));
+
+    cy.findByLabelText(/filter/i)
+      .select('Low stock');
+
+    // Assert
+    cy.contains('li', low1).should('be.visible');
+    cy.contains('li', low2).should('be.visible');
+    cy.contains('li', normal).should('not.exist');
+  });
 });
 
 describe('Food sorting', () => {

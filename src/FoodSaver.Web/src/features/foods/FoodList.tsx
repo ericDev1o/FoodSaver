@@ -73,6 +73,7 @@ export function FoodList() {
           <option value='all'>All fresh foods</option>
           <option value='expiringSoon'>Expiring soon</option>
           <option value='expiringToday'>Expiring today</option>
+          <option value="lowStock">Low stock</option>
         </select>
 
         <label htmlFor='sort'>Sort:</label>

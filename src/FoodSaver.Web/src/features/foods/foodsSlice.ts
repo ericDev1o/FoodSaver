@@ -8,7 +8,7 @@ import type {
     UndoAction 
 } from '../types';
 
-export type FoodsFilter = 'allFresh' | 'expiringSoon' | 'expiringToday';
+export type FoodsFilter = 'allFresh' | 'expiringSoon' | 'expiringToday' | 'lowStock';
 
 export type FoodsSort = 'expiryAsc' | 'nameAsc' | 'nameDesc';
 
