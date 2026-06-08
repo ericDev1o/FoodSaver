@@ -1,21 +1,21 @@
 import {
   createFood,
   createExpiryDate
-} from '../support/food-helpers'
+} from '../support/food-helpers';
+
+beforeEach(() => {
+  // Arrange
+  // Wake up API before loading UI
+  cy.request({
+    url: 'https://foodsaver-api-00tb.onrender.com/foods'
+  });
+  cy.visit('/');
+});
 
 /**
  * Please see ./accessibility.cy.ts
  */
 describe('Food workflow', () => {
-  beforeEach(() => {
-    // Arrange
-    // Wake up API before loading UI
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-    cy.visit('/');
-  });
-
   it('must create and consume a food item.', () => {
     // Arrange
     const foodName = `Milk e2e test ${Date.now()}`;
@@ -101,11 +101,6 @@ describe('Food search', () => {
 
   beforeEach(() => {
     // Arrange
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-    cy.visit('/');
-
     const suffix = Date.now();
 
     milk = `Milk ${suffix}`;
@@ -157,12 +152,6 @@ describe('Food filtering', () => {
 
   beforeEach(() => {
     // Arrange
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-
-    cy.visit('/');
-
     const suffix = Date.now();
 
     todayFood = `Today ${suffix}`;
@@ -207,12 +196,6 @@ describe('Food sorting', () => {
 
   beforeEach(() => {
     // Arrange
-    cy.request({
-      url: 'https://foodsaver-api-00tb.onrender.com/foods'
-    });
-
-    cy.visit('/');
-
     const suffix = Date.now();
 
     apple = `Apple ${suffix}`;
