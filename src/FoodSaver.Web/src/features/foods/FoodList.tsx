@@ -2,6 +2,9 @@ import {
   useDispatch, 
   useSelector 
 } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+
+import i18n from '../../i18n';
 
 import { 
   selectFilter,
@@ -44,25 +47,24 @@ export function FoodList() {
     (total, food) => total + food.quantity,
     0
   );
-  const foodLabel = activeFoodsCount === 1 
-    ? 'food' 
-    : 'foods';
+
+  const { t } = useTranslation();
   
   return (
     <>
       <div className='food-list-controls'>
-        <label htmlFor='search'>Search:</label>
+        <label htmlFor='search'>{t('search')}:</label>
         <input
           id='search'
           type='search'
-          placeholder='Search foods...'
+          placeholder={t('searchPlaceholder')}
           value={query}
           onChange={(event) =>
             dispatch(setSearchQuery(event.target.value))
           }
         />
 
-        <label htmlFor='filter'>Filter:</label>
+        <label htmlFor='filter'>{t('filter')}:</label>
         <select
           id='filter'
           value={filter}
@@ -70,13 +72,13 @@ export function FoodList() {
             dispatch(setFilterType(e.target.value as FoodsFilter))
           }
         >
-          <option value='all'>All fresh foods</option>
-          <option value='expiringSoon'>Expiring soon</option>
-          <option value='expiringToday'>Expiring today</option>
-          <option value="lowStock">Low stock</option>
+          <option value='all'>{t('allFoods')}</option>
+          <option value='expiringSoon'>{t('expiringSoonFilter')}</option>
+          <option value='expiringToday'>{t('expiringTodayFilter')}</option>
+          <option value="lowStock">{t('lowStockFilter')}</option>
         </select>
 
-        <label htmlFor='sort'>Sort:</label>
+        <label htmlFor='sort'>{t('sort')}:</label>
         <select
           id='sort'
           value={sort}
@@ -85,23 +87,21 @@ export function FoodList() {
           }
         >
           <option value='expiryAsc'>
-            Expiry date
+            {t('sortExpiryAsc')}
           </option>
 
           <option value='nameAsc'>
-            Name A → Z
+            {t('sortNameAsc')}
           </option>
 
           <option value='nameDesc'>
-            Name Z → A
+            {t('sortNameDesc')}
           </option>
         </select>
       </div>
       
-      <p>
-          {activeFoodsCount} {foodLabel}
-          {' '}to consume
-        </p>
+      <p>{t('foodsToConsume', { count: activeFoodsCount })}</p>
+
       <ul>
         {visibleFoods.map((food) => {
           const isExpired = food.expiryDate < today; 
@@ -120,27 +120,26 @@ export function FoodList() {
             expiryDate >= startOfToday &&
             expiryDate < tomorrow;
 
+          const date = new Date(food.expiryDate);
+          const formattedDate = date.toLocaleDateString(i18n.language, {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+
           return (
             <li key={food.id}>
               <span>
                 {food.name} x{food.quantity}
+                {' '}
                 {food.quantity === 1 && (
                   <span className='low-stock-badge'>
-                    Low stock
+                    {t('badgeLowStock')}
                   </span>
                 )}
-                {isExpired ? ' expired ' : ' expires '} 
-                on {' '} 
-                {new Date(food.expiryDate)
-                  .toLocaleDateString(
-                    'en-GB', 
-                    {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric'
-                    }
-                  )
-                }
+                {isExpired ? t('expired') : t('expires')} 
+                {' '} 
+                {formattedDate}
               </span>
 
               {food.quantity > 0 && (
@@ -150,8 +149,8 @@ export function FoodList() {
                 }}
                 >
                   {food.quantity === 1
-                  ? 'Consume'
-                  : 'Consume 1'}
+                  ? t('consume')
+                  : t('consumeOne')}
                 </button>
 
                 {food.quantity > 1 && (
@@ -159,7 +158,7 @@ export function FoodList() {
                     dispatch(consumeFood({id: food.id, qty: food.quantity}));
                   }}
                   >
-                    Consume all
+                    {t('consumeAll')}
                   </button>
                 )}
 
@@ -168,11 +167,11 @@ export function FoodList() {
                     <button 
                       className='undo'
                       onClick={() => dispatch(undoFoodAction())}>
-                      Undo
+                      {t('undo')}
                     </button>
 
                     <button onClick={() => dispatch(confirmFoodAction())}>
-                      Confirm
+                      {t('confirm')}
                     </button>
                   </div>
                 )}
@@ -181,13 +180,13 @@ export function FoodList() {
 
               {isSoonToExpire && (
                 <span className='soon-badge'>
-                  expiring soon
+                  {t('badgeExpiringSoon')}
                 </span>
               )}
 
               {isExpiringToday && (
                 <span className='today-badge'>
-                  expiring today !
+                  {t('badgeExpiringToday')}
                 </span>
               )}
             </li>

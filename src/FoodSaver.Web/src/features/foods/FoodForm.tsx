@@ -3,6 +3,7 @@ import {
   useMemo, 
   useState } 
 from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { CreateFoodRequest } from '../types';
 
@@ -19,6 +20,8 @@ export function FoodForm({ onCreate }: Props) {
   const [quantity, setQuantity] = useState(1);
 
   const todayString = useMemo(() => getTodayDateString(), []);
+
+  const { t } = useTranslation();
 
   const handleSubmit = useCallback(() => {
     setError(null);
@@ -60,20 +63,20 @@ export function FoodForm({ onCreate }: Props) {
           className='sr-only'
           htmlFor='name'
         >
-          Food name
+          {t('foodName')}
         </label>
         <input
           id='name'
           value={name}
           onChange={(e) => {setName(e.target.value)}}
-          placeholder='Food name'  
+          placeholder={t('foodName')} 
         />
 
         <label
           className='sr-only'
           htmlFor='date'
         >
-          Use-by
+          {t('expiryDate')}
         </label>
         <input
           id='date'
@@ -87,7 +90,7 @@ export function FoodForm({ onCreate }: Props) {
           className='sr-only' 
           htmlFor='quantity'
         >
-          Quantity
+          {t('quantity')}
         </label>
         <input
           id='quantity' 
@@ -97,7 +100,7 @@ export function FoodForm({ onCreate }: Props) {
           onChange={(e) => setQuantity(e.target.valueAsNumber)}
         />
 
-        <button type='submit'>Add</button>
+        <button type='submit'>{t('add')}</button>
       </form>
     </>
   );

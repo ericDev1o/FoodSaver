@@ -6,6 +6,8 @@ import {
 
 import { useDispatch } from 'react-redux';
 
+import { useTranslation } from 'react-i18next';
+
 import { addFood } from '../features/foods/foodsSlice';
 
 import { FoodList } from '../features/foods/FoodList';
@@ -28,6 +30,14 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   const isDark = theme === 'dark';
+
+  const { i18n, t } = useTranslation();
+
+  const toggleLanguage = () => {
+    const next = i18n.language === 'en' ? 'fr' : 'en';
+    i18n.changeLanguage(next);
+    localStorage.setItem('lang', next);
+  };
 
   const dispatch = useDispatch();
 
@@ -93,6 +103,11 @@ export default function App() {
     <div className='app-container'>
       <header className={`app-header ${scrolled ? 'scrolled' : ''}`}>
         <h1>FoodSaver</h1>
+         <button 
+          className='theme-toggle'
+          onClick={toggleLanguage}>
+          {i18n.language === 'en' ? '🇫🇷 Français' : '🇬🇧 English'}
+        </button>
         <button
           className='theme-toggle'
           onClick={toggleTheme}
@@ -104,6 +119,7 @@ export default function App() {
         </button>
       </header>
       <main>
+         <p>{t('tagLine')}</p>
         {isLoading ? (
           <p>Loading foods...</p>
         ) : error ? (

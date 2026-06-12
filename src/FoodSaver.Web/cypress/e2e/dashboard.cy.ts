@@ -29,29 +29,29 @@ describe('Dashboard visible list counters', () => {
     laterFood = `Later ${suffix}`;
    
     // Arrange
-    cy.contains('p', 'Total foods')
+    cy.contains('p', /total foods|nombre total d'aliments/i)
       .should('be.visible')
       .then($el => {
         const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
         cy.wrap(value).as('initialFoods');
       });
 
-    cy.contains('p', 'Total quantity')
+    cy.contains('p', /total quantity|quantité totale/i)
       .should('be.visible')
       .then($el => {
         const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
         cy.wrap(value).as('initialQuantity');
       });
 
-    cy.contains('p', 'Expiring today')
+    cy.contains('p', /to consume today|à consommer aujourd'hui/i)
       .should('be.visible')
       .then($el => {
         const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
         cy.wrap(value).as('initialToday');
       });
 
-    cy.contains('article', 'Inventory summary')
-      .contains('p', 'Expiring soon')
+    cy.contains('article', /fridge summary|résumé du réfrigérateur/i)
+      .contains('p', /to consume soon|à consommer bientôt/i)
       .should('be.visible')
         .then($el => {
           const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
@@ -64,31 +64,34 @@ describe('Dashboard visible list counters', () => {
     createFood(laterFood, 1, createExpiryDate(10));
 
     // Assert
-    cy.findByRole('heading', { name: /dashboard/i, level: 2 })
+    cy.findByRole('heading', { 
+      name: /dashboard|tableau de bord/i, 
+      level: 2 
+    })
       .should('be.visible');
 
     cy.get('@initialFoods')
     .then(initialFoods => {
-      cy.contains('p', 'Total foods:')
+      cy.contains('p', /total foods|nombre total d'aliments/i)
         .should('contain.text', String(Number(initialFoods) + 3));
     });
 
     cy.get('@initialQuantity')
       .then(initialQuantity => {
-        cy.contains('p', 'Total quantity')
+        cy.contains('p', /total quantity|quantité totale/i)
           .should('contain.text', String(Number(initialQuantity) + 6));
       });
 
     cy.get('@initialToday')
       .then(initialToday => {
-        cy.contains('p', 'Expiring today')
+        cy.contains('p', /to consume today|à consommer aujourd'hui/i)
           .should('contain.text', String(Number(initialToday) + 1));
       });
 
     cy.get('@initialSoon')
       .then(initialSoon => {
-        cy.contains('article', 'Inventory summary')
-          .contains('p', 'Expiring soon')
+        cy.contains('article', /fridge summary|résumé du réfrigérateur/i)
+          .contains('p', /to consume soon|à consommer bientôt/i)
           .should('contain.text', String(Number(initialSoon) + 2));
       });
   });
@@ -103,42 +106,38 @@ describe('Dashboard global insights', () => {
         const parsed = [...items].map(el => {
           const text = el.textContent ?? '';
 
-          const match = text.match(/(.+)\s+x\d+\s+expires on\s+(.+)/);
+          const match = text.match(/(\d{1,2}\s+\w+\s+\d{4})/);
 
           return {
-            name: match?.[1]?.trim(),
-            date: match?.[2] ? parseFoodDate(match[2]) : null
+            name: text.split(' x')[0].trim(),
+            date: match ? parseFoodDate(match[1]) : null,
+            dateText: match?.[1]
+
           };
         }).filter(x => x.date !== null) as {
           name: string;
           date: Date;
+          dateText: string;
         }[];
 
         const next = parsed.reduce((min, curr) =>
           curr.date < min.date ? curr : min
         );
 
-        const expectedDate = next.date.toLocaleDateString(
-          'en-GB',
-          {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-          }
-        );
+        const expectedDate = next.dateText;
 
         // Assert
-        cy.contains('p', 'Oldest food:')
+        cy.contains('p', /next food to consume|prochain aliment à consommer/i)
           .should('be.visible')
-          .should('contain.text', next.name)
+          .and('contain.text', next.name)
           .and('contain.text', expectedDate)
       });
   });
 
   it('must display correct expiring soon percentage', () => {
     // Arrange - snapshot initial UI value
-    cy.contains('article', 'Global insights')
-      .contains('p', /^Expiring soon:/)
+    cy.contains('article', /global insights|indicateurs globaux/i)
+      .contains('p', /to consume soon|à consommer bientôt/i)
       .should('be.visible')
       .then($el => {
         const initialText = $el.text();
@@ -166,8 +165,8 @@ describe('Dashboard global insights', () => {
 
     // Assert - deterministic recalculation from controlled data only
     cy.get('@expectedPercent').then(expectedPercent => {
-      cy.contains('article', 'Global insights')
-        .contains('p', /^Expiring soon:/)
+      cy.contains('article', /global insights|indicateurs globaux/i)
+        .contains('p', /to consume soon|à consommer bientôt/i)
         .should('be.visible')
         .and('contain.text', `${expectedPercent}%`);
     });
@@ -175,7 +174,7 @@ describe('Dashboard global insights', () => {
 
   it('must count foods with quantity equal to one', () => {
     // Arrange
-    cy.contains('p', 'Low stock foods')
+    cy.contains('p', /foods to restock|aliments à renouveler/i)
       .should('be.visible')
       .then($el => {
         const value = Number(
@@ -199,7 +198,7 @@ describe('Dashboard global insights', () => {
     // Assert
     cy.get('@initialLowStock')
       .then(initialLowStock => {
-        cy.contains('p', 'Low stock foods')
+        cy.contains('p', /foods to restock|aliments à renouveler/i)
           .should(
             'contain.text',
             String(Number(initialLowStock) + 2)
@@ -208,33 +207,15 @@ describe('Dashboard global insights', () => {
   })
 });
 
-const months: Record<string, number> = {
-  Jan: 0,
-  Feb: 1,
-  Mar: 2,
-  Apr: 3,
-  May: 4,
-  Jun: 5,
-  Jul: 6,
-  Aug: 7,
-  Sep: 8,
-  Oct: 9,
-  Nov: 10,
-  Dec: 11
-};
-
 function parseFoodDate(text: string): Date {
-  const match = text.match(/(\d+)\s+(\w+)\s+(\d{4})/);
-
-  if (!match) {
+  const match = text.match(/(\d{1,2}\s+\w+\s+\d{4})$/);
+  if (!match)
     throw new Error(`Invalid date: ${text}`);
-  }
 
-  const [, day, month, year] = match;
+  const date = new Date(match[1]);
 
-  return new Date(
-    Number(year),
-    months[month],
-    Number(day)
-  );
+  if(isNaN(date.getTime()))
+    throw new Error(`Invalid date: ${text}`);
+
+  return date;
 }
