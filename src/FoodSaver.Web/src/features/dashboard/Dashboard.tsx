@@ -31,7 +31,7 @@ export default function Dashboard() {
         month: 'short',
         year: 'numeric'
         })
-    : 'None';
+    : t('none');
 
     return(
         <section>

@@ -9,7 +9,12 @@ beforeEach(() => {
   cy.request({
     url: 'https://foodsaver-api-00tb.onrender.com/foods'
   });
-  cy.visit('/');
+  cy.visit('/', {
+    onBeforeLoad(win) {
+      win.localStorage.setItem('lang', 'fr');
+      win.document.documentElement.lang = 'fr';
+    }
+  });
 });
 
 /**
@@ -29,7 +34,7 @@ describe('Dashboard visible list counters', () => {
     laterFood = `Later ${suffix}`;
    
     // Arrange
-    cy.contains('p', /total foods|nombre total d'aliments/i)
+    cy.contains('p', /total foods|nombre total d['’]aliments/i)
       .should('be.visible')
       .then($el => {
         const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
@@ -43,7 +48,7 @@ describe('Dashboard visible list counters', () => {
         cy.wrap(value).as('initialQuantity');
       });
 
-    cy.contains('p', /to consume today|à consommer aujourd'hui/i)
+    cy.contains('p', /to consume today|à consommer aujourd['’]hui/i)
       .should('be.visible')
       .then($el => {
         const value = Number($el.text().match(/\d+/)?.[0] ?? 0);
@@ -72,7 +77,7 @@ describe('Dashboard visible list counters', () => {
 
     cy.get('@initialFoods')
     .then(initialFoods => {
-      cy.contains('p', /total foods|nombre total d'aliments/i)
+      cy.contains('p', /total foods|nombre total d['’]aliments/i)
         .should('contain.text', String(Number(initialFoods) + 3));
     });
 
@@ -84,7 +89,7 @@ describe('Dashboard visible list counters', () => {
 
     cy.get('@initialToday')
       .then(initialToday => {
-        cy.contains('p', /to consume today|à consommer aujourd'hui/i)
+        cy.contains('p', /to consume today|à consommer aujourd['’]hui/i)
           .should('contain.text', String(Number(initialToday) + 1));
       });
 
@@ -100,7 +105,7 @@ describe('Dashboard visible list counters', () => {
 describe('Dashboard global insights', () => {
   it('must display next expiring food from existing inventory', () => {
     // Act
-    cy.get('li')
+    cy.get('li', {timeout: 60000})
       .should('have.length.greaterThan', 0)
       .then(items => {
         const parsed = [...items].map(el => {
@@ -141,7 +146,7 @@ describe('Dashboard global insights', () => {
       .should('be.visible')
       .then($el => {
         const initialText = $el.text();
-        const initialMatch = initialText.match(/\((\d+) of (\d+)\)/);
+        const initialMatch = initialText.match(/\((\d+)\s+(?:of|sur)\s+(\d+)\)/);
 
         const soonBefore = Number(initialMatch?.[1] ?? 0);
         const totalBefore = Number(initialMatch?.[2] ?? 0);
@@ -207,15 +212,57 @@ describe('Dashboard global insights', () => {
   })
 });
 
+const months: Record<string, number> = {
+  jan: 0,
+  janvier: 0,
+
+  feb: 1,
+  février: 1,
+  fevrier: 1,
+
+  mar: 2,
+  mars: 2,
+
+  apr: 3,
+  avril: 3,
+
+  may: 4,
+  mai: 4,
+
+  jun: 5,
+  juin: 5,
+
+  jul: 6,
+  juillet: 6,
+
+  aug: 7,
+  août: 7,
+  aout: 7,
+
+  sep: 8,
+  septembre: 8,
+
+  oct: 9,
+  octobre: 9,
+
+  nov: 10,
+  novembre: 10,
+
+  dec: 11,
+  décembre: 11,
+  decembre: 11
+};
+
 function parseFoodDate(text: string): Date {
-  const match = text.match(/(\d{1,2}\s+\w+\s+\d{4})$/);
+  const match = text.match(/(\d{1,2})\s+([\p{L}]+)\s+(\d{4})/u);
   if (!match)
     throw new Error(`Invalid date: ${text}`);
 
-  const date = new Date(match[1]);
+  const [, day, month, year] = match;
 
-  if(isNaN(date.getTime()))
-    throw new Error(`Invalid date: ${text}`);
-
-  return date;
+  return new Date(
+    Number(year),
+    months[month.toLowerCase()],
+    Number(day)
+  );
 }

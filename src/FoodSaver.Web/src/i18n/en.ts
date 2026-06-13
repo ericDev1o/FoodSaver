@@ -1,5 +1,7 @@
 export const en = {
   translation: {
+    metaDescription: 'Track food expiry dates and reduce household waste.',
+
     tagLine: 'Reduce your food waste',
 
     dashboard: 'Dashboard',

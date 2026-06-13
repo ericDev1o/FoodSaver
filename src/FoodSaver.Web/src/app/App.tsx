@@ -33,10 +33,14 @@ export default function App() {
 
   const { i18n, t } = useTranslation();
 
+  const setLanguage = async (lang: string) => {
+    await i18n.changeLanguage(lang);
+    localStorage.setItem('lang', lang);
+  };
+
   const toggleLanguage = () => {
     const next = i18n.language === 'en' ? 'fr' : 'en';
-    i18n.changeLanguage(next);
-    localStorage.setItem('lang', next);
+    setLanguage(next);
   };
 
   const dispatch = useDispatch();
@@ -56,6 +60,14 @@ export default function App() {
       setError('Failed to create food.')
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    document.documentElement.lang = i18n.language;
+
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute('content', t('metaDescription'));
+  }, [i18n.language, t]);
 
   useEffect(() => {
     (async () =>  {

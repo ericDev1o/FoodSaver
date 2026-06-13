@@ -3,7 +3,7 @@ export function createFood(
   quantity: number,
   expiryDate = '2026-12-31'
 ) {
-  cy.findByPlaceholderText(/food name/i)
+  cy.findByPlaceholderText(/food name|nom de l’aliment/i)
     .clear()
     .type(foodName);
 
@@ -15,7 +15,7 @@ export function createFood(
     .clear()
     .type(quantity.toString());
 
-  cy.findByRole('button', { name: /add/i })
+  cy.findByRole('button', { name: /add|ajouter/i })
     .click();
 }
 

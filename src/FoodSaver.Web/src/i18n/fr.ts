@@ -1,5 +1,7 @@
 export const fr = {
   translation: {
+    metaDescription: 'Suivez les dates de péremption de vos aliments et réduisez le gaspillage alimentaire.',
+
     tagLine: 'Réduisez votre gaspillage alimentaire.',
 
     dashboard: 'Tableau de bord',
@@ -41,7 +43,7 @@ export const fr = {
     allFoods: 'Tous les aliments',
     expiringTodayFilter: 'À consommer aujourd’hui',
     expiringSoonFilter: 'À consommer bientôt',
-    lowStockFilter: 'Stock faible',
+    lowStockFilter: 'À renouveler',
 
     sortNameAsc: 'Nom A → Z',
     sortNameDesc: 'Nom Z → A',

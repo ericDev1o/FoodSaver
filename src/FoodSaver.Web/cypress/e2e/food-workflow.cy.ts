@@ -11,7 +11,12 @@ beforeEach(() => {
   cy.request({
     url: 'https://foodsaver-api-00tb.onrender.com/foods'
   });
-  cy.visit('/');
+  cy.visit('/', {
+    onBeforeLoad(win) {
+      win.localStorage.setItem('lang', 'fr');
+      win.document.documentElement.lang = 'fr';
+    }
+  });
 });
 
 /**
@@ -283,10 +288,14 @@ describe('Food stock', () => {
 
     // Assert
     cy.contains('li', lowStockFood)
-      .should('contain.text', /restock|à renouveler/i);
+      .should($li => {
+        expect($li.text()).to.match(/restock|à renouveler/i);
+      });
 
     cy.contains('li', normalFood)
-      .should('not.contain.text', /restock|à renouveler/i);
+      .should($li => {
+        expect($li.text()).not.to.match(/restock|à renouveler/i);
+      });
   });
 })
 
