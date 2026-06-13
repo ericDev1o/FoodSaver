@@ -6,6 +6,8 @@ import {
 
 import { useDispatch } from 'react-redux';
 
+import { useTranslation } from 'react-i18next';
+
 import { addFood } from '../features/foods/foodsSlice';
 
 import { FoodList } from '../features/foods/FoodList';
@@ -29,6 +31,18 @@ export default function App() {
 
   const isDark = theme === 'dark';
 
+  const { i18n, t } = useTranslation();
+
+  const setLanguage = async (lang: string) => {
+    await i18n.changeLanguage(lang);
+    localStorage.setItem('lang', lang);
+  };
+
+  const toggleLanguage = () => {
+    const next = i18n.language === 'en' ? 'fr' : 'en';
+    setLanguage(next);
+  };
+
   const dispatch = useDispatch();
 
   const handleCreateFood = useCallback(async (
@@ -46,6 +60,14 @@ export default function App() {
       setError('Failed to create food.')
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    document.documentElement.lang = i18n.language;
+
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute('content', t('metaDescription'));
+  }, [i18n.language]);
 
   useEffect(() => {
     (async () =>  {
@@ -93,6 +115,11 @@ export default function App() {
     <div className='app-container'>
       <header className={`app-header ${scrolled ? 'scrolled' : ''}`}>
         <h1>FoodSaver</h1>
+         <button 
+          className='theme-toggle'
+          onClick={toggleLanguage}>
+          {i18n.language === 'en' ? '🇫🇷 Français' : '🇬🇧 English'}
+        </button>
         <button
           className='theme-toggle'
           onClick={toggleTheme}
@@ -104,6 +131,7 @@ export default function App() {
         </button>
       </header>
       <main>
+         <p>{t('tagLine')}</p>
         {isLoading ? (
           <p>Loading foods...</p>
         ) : error ? (

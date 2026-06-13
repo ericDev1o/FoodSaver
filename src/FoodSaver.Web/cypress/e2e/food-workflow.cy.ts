@@ -1,3 +1,5 @@
+import i18n from '../../src/i18n';
+
 import {
   createFood,
   createExpiryDate
@@ -9,7 +11,12 @@ beforeEach(() => {
   cy.request({
     url: 'https://foodsaver-api-00tb.onrender.com/foods'
   });
-  cy.visit('/');
+  cy.visit('/', {
+    onBeforeLoad(win) {
+      win.localStorage.setItem('lang', 'fr');
+      win.document.documentElement.lang = 'fr';
+    }
+  });
 });
 
 /**
@@ -30,11 +37,11 @@ describe('Food workflow', () => {
     // Act - consume
     cy.contains('li', foodName)
       .within(() => {
-        cy.findByRole('button', { name: /consume/i })
+        cy.findByRole('button', { name: /consume|consommer/i})
           .click();
     });
 
-    cy.findByRole('button', { name: /confirm/i })
+    cy.findByRole('button', { name: /confirm|confirmer/i})
       .click();
 
     // Assert - consumed
@@ -55,11 +62,11 @@ describe('Food workflow', () => {
 
     // Act - consume 1
     cy.contains('li', foodName).within(() => {
-      cy.findByRole('button', { name: /consume 1/i })
+      cy.findByRole('button', { name: /consume 1|consommer 1/i})
         .click();
     });
 
-    cy.findByRole('button', { name: /confirm/i })
+    cy.findByRole('button', { name: /confirm|confirmer/i})
       .click();
 
     // Assert - consumed 1
@@ -81,11 +88,11 @@ describe('Food workflow', () => {
 
     // Act - consume all
     cy.contains('li', foodName).within(() => {
-      cy.findByRole('button', { name: /consume all/i })
+      cy.findByRole('button', { name: /consume all|tout consommer/i})
         .click();
     });
 
-  cy.findByRole('button', { name: /confirm/i })
+  cy.findByRole('button', { name: /confirm|confirmer/i})
     .click();
 
     // Assert - consumed all
@@ -169,8 +176,8 @@ describe('Food filtering', () => {
 
   it('must show only foods expiring today', () => {
     // Act
-    cy.findByLabelText(/filter/i)
-      .select('Expiring today');
+    cy.findByLabelText(/filter|filtrer/i)
+      .select(i18n.t('expiringToday'));
 
     // Assert
     cy.contains('li', todayFood).should('be.visible');
@@ -180,8 +187,8 @@ describe('Food filtering', () => {
 
   it('must show foods expiring within 3 days', () => {
     // Act
-    cy.findByLabelText(/filter/i)
-      .select('Expiring soon');
+    cy.findByLabelText(/filter|filtrer/i)
+      .select(i18n.t('expiringSoon'));
 
     // Assert
     cy.contains('li', todayFood).should('be.visible');
@@ -202,8 +209,8 @@ describe('Food filtering', () => {
     createFood(low2, 1, createExpiryDate(10));
     createFood(normal, 3, createExpiryDate(10));
 
-    cy.findByLabelText(/filter/i)
-      .select('Low stock');
+    cy.findByLabelText(/filter|filtrer/i)
+      .select(i18n.t('lowStock'));
 
     // Assert
     cy.contains('li', low1).should('be.visible');
@@ -228,7 +235,8 @@ describe('Food sorting', () => {
   
   it('must sort foods by name ascending', () => {
     // Act
-    cy.findByLabelText(/sort/i).select('Name A → Z');
+    cy.findByLabelText(/sort|trier/i)
+      .select(i18n.t('sortNameAsc'));
 
     // Assert
     cy.get('li')
@@ -247,7 +255,8 @@ describe('Food sorting', () => {
 
   it('must sort foods by name descending', () => {
     // Act
-    cy.findByLabelText(/sort/i).select('Name Z → A');
+    cy.findByLabelText(/sort|trier/i)
+      .select(i18n.t('sortNameDesc'));
 
     // Assert
     cy.get('li')
@@ -279,10 +288,14 @@ describe('Food stock', () => {
 
     // Assert
     cy.contains('li', lowStockFood)
-      .should('contain.text', 'Low stock');
+      .should($li => {
+        expect($li.text()).to.match(/restock|à renouveler/i);
+      });
 
     cy.contains('li', normalFood)
-      .should('not.contain.text', 'Low stock');
+      .should($li => {
+        expect($li.text()).not.to.match(/restock|à renouveler/i);
+      });
   });
 })
 

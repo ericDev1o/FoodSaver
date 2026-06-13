@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import { 
     selectTotalFoods, 
@@ -22,25 +23,43 @@ export default function Dashboard() {
     const globalExpiringSoonSummary = useSelector(selectExpiringSoonSummary);
     const globalLowStockCount = useSelector(selectLowStockFoods).length;
 
+    const { i18n, t } = useTranslation();
+
+    const formatted = globalOldestExpiryDate
+    ? globalOldestExpiryDate.toLocaleDateString(i18n.language, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+        })
+    : t('none');
+
     return(
         <section>
-            <h2>Dashboard</h2>
+            <h2>{t('dashboard')}</h2>
             <article>
-                <h3>Global insights</h3>
+                <h3>{t('globalInsights')}</h3>
                 <p>
-                    Oldest food: {globalNextExpiringFood?.name ?? 'None'}
-                    {globalNextExpiringFood && ` — expires ${globalOldestExpiryDate}`}
+                    {t('nextExpiry')}: {globalNextExpiringFood?.name ?? t('none')}
+                    {globalNextExpiringFood && ` — ${t('expires')} ${formatted}`}
                 </p>
-                <p>Expiring soon: {globalExpiringSoonSummary.percentage}% ({globalExpiringSoonSummary.count} of {globalExpiringSoonSummary.total})</p>
-                <p>Low stock foods: {globalLowStockCount}</p>
+                <p>
+                    {t('expiringSoon')}: {' '}
+                        {globalExpiringSoonSummary.percentage}% 
+                        (
+                            {globalExpiringSoonSummary.count} 
+                            {' '} {t('of')} {' '}
+                            {globalExpiringSoonSummary.total}
+                        )
+                </p>
+                <p>{t('lowStockFoods')}: {globalLowStockCount}</p>
             </article>
 
             <article>
-                <h3>Inventory summary</h3>
-                <p>Total foods: {visibleTotalFoods}</p>
-                <p>Total quantity: {visibleTotalQuantity}</p>
-                <p>Expiring today: {visibleExpiringToday}</p>
-                <p>Expiring soon: {visibleExpiringSoon}</p>
+                <h3>{t('inventorySummary')}</h3>
+                <p>{t('totalFoods')}: {visibleTotalFoods}</p>
+                <p>{t('totalQuantity')}: {visibleTotalQuantity}</p>
+                <p>{t('expiringToday')}: {visibleExpiringToday}</p>
+                <p>{t('expiringSoon')}: {visibleExpiringSoon}</p>
             </article>
         </section>
     );
