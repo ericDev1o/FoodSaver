@@ -67,7 +67,7 @@ export default function App() {
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute('content', t('metaDescription'));
-  }, [i18n.language, t]);
+  }, [i18n.language]);
 
   useEffect(() => {
     (async () =>  {
