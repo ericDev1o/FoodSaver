@@ -7,6 +7,8 @@ import { foodSaverStore } from './store';
 
 import './index.css';
 
+import './i18n';
+
 const rootElement = document.getElementById('root');
 if(rootElement) {
   const root = createRoot(rootElement);

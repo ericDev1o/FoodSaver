@@ -69,16 +69,8 @@ export const selectOldestFoodDate = createSelector(
   [selectNextExpiringFood],
   oldestFood => {
     if(! oldestFood) 
-      return 'None';
-    return new Date(oldestFood.expiryDate)
-      .toLocaleDateString(
-        'en-GB',
-        {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        }
-      );
+      return null;
+    return new Date(oldestFood.expiryDate);
   }
 );
 
